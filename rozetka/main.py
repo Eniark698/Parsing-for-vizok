@@ -16,7 +16,7 @@ import dateparser
 import datetime
 import os
 from alive_progress import alive_bar
-from site_list import links
+from rozetka.site_list import links
 from traceback import format_exc
 import os
 from warnings import filterwarnings
