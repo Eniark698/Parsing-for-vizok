@@ -98,9 +98,9 @@ links={'Господарські_товари':['https://rozetka.com.ua/ua/bumag
                                         ,'https://rozetka.com.ua/ua/sredstva-dlya-ruchnogo-mitya/c4632040/osobennosti162808=dlya-ovoshchey-i-fruktov/'
                                         ,'https://rozetka.com.ua/ua/podguzniki-i-pelenanie/c3973646/'
        ]
-        ,'Дитячі_суміші':'https://rozetka.com.ua/ua/detskie-smesi/c2586302/'
-        ,'Дитячі_каші':'https://rozetka.com.ua/ua/detskie-kashi/c2586312/'
-        ,'Дитячі_пюре':'https://rozetka.com.ua/ua/detskoe-pyure/c2586332/'
+        ,'Дитячі_суміші':['https://rozetka.com.ua/ua/detskie-smesi/c2586302/']
+        ,'Дитячі_каші':['https://rozetka.com.ua/ua/detskie-kashi/c2586312/']
+        ,'Дитячі_пюре':['https://rozetka.com.ua/ua/detskoe-pyure/c2586332/']
         ,'Товари_для_кішок':['https://rozetka.com.ua/ua/food_for_cats/c1461212/'
                              ,'https://rozetka.com.ua/ua/fillers_for_toilets/c2336637/62011=197552/'
                              ,'https://rozetka.com.ua/ua/uhod-i-gigiena/c3504864/64063=216894/'
@@ -117,7 +117,7 @@ links={'Господарські_товари':['https://rozetka.com.ua/ua/bumag
                              ,'https://rozetka.com.ua/ua/dverci-dlia-koshek-i-sobak/c4626639/naznachenie-86379=dlja-koshek/'
                              ,'https://rozetka.com.ua/ua/vetpreparaty/c4627687/vid-givotnogo=koshki/'
         ]
-        ,'Товари для собак':['https://rozetka.com.ua/ua/food_for_dogs/c1461202/'
+        ,'Товари_для_собак':['https://rozetka.com.ua/ua/food_for_dogs/c1461202/'
                              ,'https://rozetka.com.ua/ua/vitamins_for_pets/c2986023/61619=193821/'
                              ,'https://rozetka.com.ua/ua/posuda-dlya-jivotnyh/c2183122/57802=156072/'
                              ,'https://rozetka.com.ua/ua/uhod-i-gigiena/c3504864/64063=216901/'
@@ -135,7 +135,7 @@ links={'Господарські_товари':['https://rozetka.com.ua/ua/bumag
                              ,'https://rozetka.com.ua/ua/vetpreparaty/c4627687/vid-givotnogo=sobaki/'
                              ,'https://rozetka.com.ua/ua/tablichki/c4648150/'
                              ] 
-        ,"Краса та здоров'я":['https://rozetka.com.ua/ua/krem-dlya-litsa/c4657262/naznachenie-201949=antivozrastnoe;56277=dermatokosmetika/'
+        ,"Краса_та_здоров'я":['https://rozetka.com.ua/ua/krem-dlya-litsa/c4657262/naznachenie-201949=antivozrastnoe;56277=dermatokosmetika/'
                               ,'https://rozetka.com.ua/ua/sredstvo-dlya-umivaniya/c4657274/naznachenie-201949=antivozrastnoe;56277=dermatokosmetika/'
                               ,'https://rozetka.com.ua/ua/sivorotka-dlya-litsa/c4657286/naznachenie-201949=antivozrastnoe;56277=dermatokosmetika/'
                               ,'https://rozetka.com.ua/ua/tonik-dlya-litsa/c4657316/naznachenie-201949=antivozrastnoe;56277=dermatokosmetika/'
@@ -288,7 +288,7 @@ links={'Господарські_товари':['https://rozetka.com.ua/ua/bumag
                               ,'https://rozetka.com.ua/ua/parafinoterapiya/c4629207/'
                               ,'https://rozetka.com.ua/ua/krem-dlya-depilyatsii/c4657890/'
                               ,'https://rozetka.com.ua/ua/zubnaya-pasta/c4658138/'
-                              ,''
+                              
 
 
         ]

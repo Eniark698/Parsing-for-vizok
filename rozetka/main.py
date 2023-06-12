@@ -16,7 +16,7 @@ import dateparser
 import datetime
 import os
 from alive_progress import alive_bar
-from rozetka.site_list import links
+from site_list import links
 from traceback import format_exc
 import os
 from warnings import filterwarnings
@@ -54,9 +54,12 @@ driver = webdriver.Chrome(service=s, options=options)
 try:
     with alive_bar(len(links)) as bar:
         for key, url_total in links.items():
-            if key=="Краса та здоров'я":
+            #key=key.replace(' ', '_')
+            if key=='Дитячі_суміші':
+                pass
+            else:
                 continue
-            key=key.replace(' ', '_')
+            
 
             # Define list to store reviews data
             reviews = []
@@ -66,11 +69,12 @@ try:
 
                 
                 driver.get(url)
+                #url = url.encode('ascii', 'ignore').decode('unicode_escape')
 
 
 
                 # Wait until page is loaded
-                time.sleep(5)
+                time.sleep(2)
 
                 
 
@@ -80,8 +84,8 @@ try:
                 # Clicking the button to load more reviews
                 while True:
                     try:
-                        wait(driver, 5).until(EC.element_to_be_clickable((By.XPATH, "//rz-load-more[@class='ng-star-inserted']"))).click()
-                        time.sleep(3)
+                        wait(driver, 15).until(EC.element_to_be_clickable((By.XPATH, "//rz-load-more[@class='ng-star-inserted']"))).click()
+                        time.sleep(2)
                     except:
                         break
 
@@ -104,15 +108,21 @@ try:
                     driver.execute_script(f'''window.open("{block}","_blank");''')
                     driver.switch_to.window(driver.window_handles[1])
                     driver.get(block)
+                    #block = block.encode('ascii', 'ignore').decode('unicode_escape')
                     time.sleep(3)
 
 
 
                     soup1 = BeautifulSoup(driver.page_source, 'html.parser')
-
-                    code=soup1.find('p', class_='product__code detail-code').text.replace(' ', '')
-                    code_i=code.find(':')
-                    code=code[code_i+2:]
+                    try:
+                        code=soup1.find('p', class_='product__code detail-code').text.replace(' ', '')
+                        code_i=code.find(':')
+                        code=code[code_i+2:]
+                    except:
+                        driver.close()
+                        driver.switch_to.window(driver.window_handles[0])
+                        continue
+                    
                     name=soup1.find('h1', class_='product__title').text
 
 
@@ -128,8 +138,12 @@ try:
                         seller_parent=soup1.find('p', class_='product-seller__title')
                         seller=seller_parent.find('img').attrs['alt']
                     except:
-                        seller=None
-
+                        try:
+                            seller=seller_parent.find('strong', class_='ng-star-inserted').text
+                        except:
+                            seller=None
+                
+                    
                     #finding current_price and old_price
                     try:
                         price=soup1.find('p', class_='product-price__big product-price__big-color-red').text
@@ -156,7 +170,19 @@ try:
                     except:
                         status=None
 
+                    try:
+                        preorder=soup1.find('div', class_='preorder-text-item ng-star-inserted').text
+                    except:
+                        preorder=None
 
+                    try:
+                        payment=soup1.find('div', class_='product-about__text').text
+                    except:
+                        payment=None
+                    try:
+                        payment_terms=soup1.find('div', class_='product-about__item ng-star-inserted').text
+                    except:
+                        payment_terms=None
 
                     try:
                         number_of_questions=int(soup1.find('span', class_='tabs__link-text ng-star-inserted').text)
@@ -181,8 +207,8 @@ try:
                     for star_icon in stars_group:
                         s+=float(star_icon.find('stop').attrs['offset'])
                     
-
-                    reviews={"code":code
+                    
+                    reviews.append({"code":code
                             ,"stars":s
                             ,"name":name
                             ,"review_number":review_number
@@ -194,34 +220,49 @@ try:
                             ,"number_of_questions":number_of_questions
                             ,"formula":formula
                             ,"delivery":delivery
-                            }
-
+                            ,'payment':payment
+                            ,'payment_terms':payment_terms
+                            ,'preorder':preorder
+                            })
                     
 
                     # time.sleep(3)
                     #driver.switch_to.window(driver.window_handles[0])
-                    time.sleep(1)
+                    time.sleep(0.5)
                     driver.close()
                     driver.switch_to.window(driver.window_handles[0])
                     #driver.execute_script(f'window.close("{block}","_blank");')
-                    time.sleep(3)
+                    time.sleep(1)
 
 
 
-            time.sleep(3)
+            time.sleep(1.5)
 
 
 
 
 
             # Create dataframe
-            df = pd.DataFrame(reviews)
+            df = pd.DataFrame(reviews, columns=["code"
+                            ,"stars"
+                            ,"name"
+                            ,"review_number"
+                            ,"seller"
+                            ,"price"
+                            ,"old_price"
+                            ,"likes_count"
+                            ,"status"
+                            ,"number_of_questions"
+                            ,"formula"
+                            ,"delivery"
+                            ,"payment"
+                            ,"payment_terms"
+                            ,'preorder'])
             df=df.drop_duplicates()
-
             # Save to csv
-            df.to_csv(current_working_directory+f'/{key}.csv', index=False, sep='\t', encoding='utf-16')
+            df.to_excel(current_working_directory+f'/{key}.csv', index=True)
             bar()
-            time.sleep(3)
+            time.sleep(1.5)
 except:
     f=open(current_working_directory + '/log.txt', 'a')
     f.write('----------------------------------------\n')
