@@ -104,13 +104,15 @@ try:
                 # Extract data from each container
                 for container in containers:
                     
-                    block = container.find('a', class_='goods-tile__picture ng-star-inserted').attrs['href']
-                    driver.execute_script(f'''window.open("{block}","_blank");''')
-                    driver.switch_to.window(driver.window_handles[1])
-                    driver.get(block)
+                    try:
+                        block = container.find('a', class_='goods-tile__picture ng-star-inserted').attrs['href']
+                        driver.execute_script(f'''window.open("{block}","_blank");''')
+                        driver.switch_to.window(driver.window_handles[1])
+                        driver.get(block)
+                    except:
+                        continue
                     #block = block.encode('ascii', 'ignore').decode('unicode_escape')
                     time.sleep(3)
-
 
 
                     soup1 = BeautifulSoup(driver.page_source, 'html.parser')
@@ -206,6 +208,7 @@ try:
                     s=0
                     for star_icon in stars_group:
                         s+=float(star_icon.find('stop').attrs['offset'])
+                    s=round(s,2)
                     
                     
                     reviews.append({"code":code
