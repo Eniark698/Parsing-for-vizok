@@ -279,9 +279,47 @@ links={'Господарські_товари':['https://rozetka.com.ua/ua/bumag
                               ,'https://rozetka.com.ua/ua/sprey-dlya-volos/c4657788/'
                               ,'https://rozetka.com.ua/ua/lak-dlya-volos/c4657752/'
                               ,'https://rozetka.com.ua/ua/muss-dlya-volos/c4657758/'
-                              
-
-
+                              ,'https://rozetka.com.ua/ua/kosmetika-po-uhody-dlia-detei/c266262/72578=305378/'
+                              ,'https://rozetka.com.ua/ua/kosmetika-po-uhody-dlia-detei/c266262/72578=305360/'
+                              ,'https://rozetka.com.ua/ua/kosmetika-po-uhody-dlia-detei/c266262/72578=305384/'
+                              ,'https://rozetka.com.ua/ua/kosmetika-po-uhody-dlia-detei/c266262/72578=305372/'
+                              ,'https://rozetka.com.ua/ua/sunscreens/c2048517/56387=dlya-detey/'
+                              ,'https://rozetka.com.ua/ua/kosmetika-dlya-beremennih-i-mam/c4657974/'
+                              ,'https://rozetka.com.ua/ua/dezodoranti-i-antiperspiranti/c4657478/'
+                              ,'https://rozetka.com.ua/ua/gel-dlya-dusha/c4657532/'
+                              ,'https://rozetka.com.ua/ua/milo/c4657538/'
+                              ,'https://rozetka.com.ua/ua/sol-dlya-vanni/c4657550/'
+                              ,'https://rozetka.com.ua/ua/krem-dlya-tela/c4657484/'
+                              ,'https://rozetka.com.ua/ua/biotatu/c3360588/'
+                              ,'https://rozetka.com.ua/ua/maslo-dlya-tela/c4657502/'
+                              ,'https://rozetka.com.ua/ua/pena-dlya-vanni/c4657544/'
+                              ,'https://rozetka.com.ua/ua/hands_feet_care/c2048752/'
+                              ,'https://rozetka.com.ua/ua/feet_care/c4657466/'
+                              ,'https://rozetka.com.ua/ua/zubnaya-pasta/c4658138/'
+                              ,'https://rozetka.com.ua/ua/zubnaya-shchetka/c4658150/'
+                              ,'https://rozetka.com.ua/ua/opolaskivatel-dlya-rta/c4658162/'
+                              ,'https://rozetka.com.ua/ua/zubnaya-nit/c4658144/'
+                              ,'https://rozetka.com.ua/ua/yorshiki-dlya-zubov/c4658156/'
+                              ,'https://rozetka.com.ua/ua/sredstva-dlya-otbelivaniya-zubov/c4658180/'
+                              ,'https://rozetka.com.ua/ua/nabori-po-uhodu-za-polostyu-rta/c4658198/'
+                              ,'https://bt.rozetka.com.ua/ua/zubnye-schetki-i-irrigatory/c437994/'
+                              ,'https://rozetka.com.ua/ua/stanok-dlya-britya/c4658647/'
+                              ,'https://rozetka.com.ua/ua/lezvie-britvi/c4658653/'
+                              ,'https://rozetka.com.ua/ua/kosmetika-dlya-britya/c4660083/'
+                              ,'https://rozetka.com.ua/ua/kosmetika-posle-britya/c4660412/'
+                              ,'https://rozetka.com.ua/ua/nabori-dlya-britya/c4658671/'
+                              ,'https://rozetka.com.ua/ua/voskoplavy/c4628481/'
+                              ,'https://rozetka.com.ua/ua/raskhodnye-materialy-dlia-depiliatsii/c4628523/'
+                              ,'https://rozetka.com.ua/ua/vosk4644528/c4644528/'
+                              ,'https://rozetka.com.ua/ua/saharnaya-pasta/c4644536/'
+                              ,'https://rozetka.com.ua/ua/materiali-dlya-depilyatsii/c4641504/'
+                              ,'https://rozetka.com.ua/ua/parafinoterapiya/c4629207/'
+                              ,'https://rozetka.com.ua/ua/voskovie-poloski/c4657884/'
+                              ,'https://rozetka.com.ua/ua/krem-dlya-depilyatsii/c4657890/'
         ]
+                    ,'Not_ready': ['https://sexshop.rozetka.com.ua/ua/']
+
+
+        
                              
                              }

@@ -55,10 +55,10 @@ try:
     with alive_bar(len(links)) as bar:
         for key, url_total in links.items():
             #key=key.replace(' ', '_')
-            if key=='Дитячі_суміші':
-                pass
-            else:
+            if key =='Not_ready':
                 continue
+            else:
+                pass
             
 
             # Define list to store reviews data
@@ -260,7 +260,7 @@ try:
                             ,'preorder'])
             df=df.drop_duplicates()
             # Save to csv
-            df.to_excel(current_working_directory+f'/{key}.csv', index=True)
+            df.to_excel(current_working_directory+f'/{key}.xlsx', index=True)
             bar()
             time.sleep(1.5)
 except:
