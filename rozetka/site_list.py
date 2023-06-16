@@ -91,17 +91,18 @@ links={'Господарські_товари':['https://rozetka.com.ua/ua/bumag
                           ,'https://rozetka.com.ua/ua/sredstva-dlya-tehniki/c4625098/naznachenie-72102=320301/'
                           ,'https://rozetka.com.ua/ua/sredstva-dlya-tehniki/c4625098/naznachenie-72102=dlya-sushilnih-mashin/'
        ]
-       ,'Гігієна_та_догляд_за_дитиною':['https://rozetka.com.ua/ua/detskie-vannochki-i-aksessuary/c197325/'
+       ,'Дитячі_товари':['https://rozetka.com.ua/ua/detskie-vannochki-i-aksessuary/c197325/'
                                         ,'https://rozetka.com.ua/ua/detskie-gorshki-i-sidenya/c197393/'
                                         ,'https://rozetka.com.ua/ua/kosmetika-po-uhody-dlia-detei/c266262/72578=305360/'
                                         ,'https://rozetka.com.ua/ua/kosmetika-po-uhody-dlia-detei/c266262/72578=305378/'
                                         ,'https://rozetka.com.ua/ua/igrushki-dlya-plyaga-pesochnitsi-i-vannoy/c4631200/naznachenie125685=dlya-vodi/'
                                         ,'https://rozetka.com.ua/ua/sredstva-dlya-ruchnogo-mitya/c4632040/osobennosti162808=dlya-ovoshchey-i-fruktov/'
                                         ,'https://rozetka.com.ua/ua/podguzniki-i-pelenanie/c3973646/'
+                                        ,'https://rozetka.com.ua/ua/detskie-smesi/c2586302/'
+                                        ,'https://rozetka.com.ua/ua/detskie-kashi/c2586312/'
+                                        ,'https://rozetka.com.ua/ua/detskoe-pyure/c2586332/'
        ]
-        ,'Дитячі_суміші':['https://rozetka.com.ua/ua/detskie-smesi/c2586302/']
-        ,'Дитячі_каші':['https://rozetka.com.ua/ua/detskie-kashi/c2586312/']
-        ,'Дитячі_пюре':['https://rozetka.com.ua/ua/detskoe-pyure/c2586332/']
+       
         ,'Товари_для_кішок':['https://rozetka.com.ua/ua/food_for_cats/c1461212/'
                              ,'https://rozetka.com.ua/ua/fillers_for_toilets/c2336637/62011=197552/'
                              ,'https://rozetka.com.ua/ua/uhod-i-gigiena/c3504864/64063=216894/'

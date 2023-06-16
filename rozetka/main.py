@@ -55,7 +55,7 @@ try:
     with alive_bar(len(links)) as bar:
         for key, url_total in links.items():
             #key=key.replace(' ', '_')
-            if key =='Not_ready':
+            if key =='Дитячі_товари':
                 continue
             else:
                 pass
