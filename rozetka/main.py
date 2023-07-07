@@ -11,7 +11,7 @@ from bs4 import BeautifulSoup
 import numpy as np
 import pandas as pd
 import time
-import xpath
+#import xpath
 import dateparser
 import datetime
 import os
@@ -22,7 +22,6 @@ import os
 from warnings import filterwarnings
 filterwarnings("ignore")
 
-
 # get the current working directory
 current_working_directory = os.getcwd()
 
@@ -30,7 +29,29 @@ current_working_directory = os.getcwd()
 
 
 
+#connect to temp db
+import sqlite3
+con=sqlite3.connect(current_working_directory+'/temp.db')
+con.isolation_level=None
+cur=con.cursor()
 
+cur.execute('''create table if not exists temp_table(
+            code nvarchar(255),
+            stars float,
+            name nvarchar(255),
+            review_number int,
+            seller nvarchar(255),
+            price nvarchar(255),
+            old_price nvarchar(255),
+            likes_count int,
+            status nvarchar(255),
+            number_of_questions int,
+            formula nvarchar(255),
+            delivery nvarchar(255),
+            preorder nvarchar(255),
+            new_code int,
+            category nvarchar(255)
+)''')
 
 
 
@@ -54,15 +75,9 @@ driver = webdriver.Chrome(service=s, options=options)
 try:
     with alive_bar(len(links)) as bar:
         for key, url_total in links.items():
-            #key=key.replace(' ', '_')
-            if key =='Дитячі_товари':
-                continue
-            else:
-                pass
+            
             
 
-            # Define list to store reviews data
-            reviews = []
 
 
             for url in url_total:
@@ -82,12 +97,12 @@ try:
 
 
                 # Clicking the button to load more reviews
-                while True:
-                    try:
-                        wait(driver, 15).until(EC.element_to_be_clickable((By.XPATH, "//rz-load-more[@class='ng-star-inserted']"))).click()
-                        time.sleep(2)
-                    except:
-                        break
+                # while True:
+                #     try:
+                #         wait(driver, 15).until(EC.element_to_be_clickable((By.XPATH, "//rz-load-more[@class='ng-star-inserted']"))).click()
+                #         time.sleep(2)
+                #     except:
+                #         break
 
                 # Get page source and parse it
                 soup = BeautifulSoup(driver.page_source, 'html.parser')
@@ -126,6 +141,11 @@ try:
                         continue
                     
                     name=soup1.find('h1', class_='product__title').text
+
+                    try:
+                        new_code=name[name.find("(")+1:name.find(")")]
+                    except:
+                        new_code=None
 
 
 
@@ -177,14 +197,7 @@ try:
                     except:
                         preorder=None
 
-                    try:
-                        payment=soup1.find('div', class_='product-about__text').text
-                    except:
-                        payment=None
-                    try:
-                        payment_terms=soup1.find('div', class_='product-about__item ng-star-inserted').text
-                    except:
-                        payment_terms=None
+                    
 
                     try:
                         number_of_questions=int(soup1.find('span', class_='tabs__link-text ng-star-inserted').text)
@@ -209,61 +222,39 @@ try:
                     for star_icon in stars_group:
                         s+=float(star_icon.find('stop').attrs['offset'])
                     s=round(s,2)
-                    
-                    
-                    reviews.append({"code":code
-                            ,"stars":s
-                            ,"name":name
-                            ,"review_number":review_number
-                            ,"seller":seller
-                            ,"price":price
-                            ,"old_price":old_price
-                            ,"likes_count":likes_count
-                            ,"status":status
-                            ,"number_of_questions":number_of_questions
-                            ,"formula":formula
-                            ,"delivery":delivery
-                            ,'payment':payment
-                            ,'payment_terms':payment_terms
-                            ,'preorder':preorder
-                            })
+
+
+                    data=(code
+                            ,s
+                            ,name
+                            ,review_number
+                            ,seller
+                            ,price
+                            ,old_price
+                            ,likes_count
+                            ,status
+                            ,number_of_questions
+                            ,formula
+                            ,delivery
+                            ,preorder
+                            ,new_code
+                            ,key)
                     
 
-                    # time.sleep(3)
-                    #driver.switch_to.window(driver.window_handles[0])
+                    cur.execute(""" insert into temp_table values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""", data)
+                    
+
+
+
                     time.sleep(0.5)
                     driver.close()
                     driver.switch_to.window(driver.window_handles[0])
-                    #driver.execute_script(f'window.close("{block}","_blank");')
+                    
                     time.sleep(1)
-
 
 
             time.sleep(1.5)
 
-
-
-
-
-            # Create dataframe
-            df = pd.DataFrame(reviews, columns=["code"
-                            ,"stars"
-                            ,"name"
-                            ,"review_number"
-                            ,"seller"
-                            ,"price"
-                            ,"old_price"
-                            ,"likes_count"
-                            ,"status"
-                            ,"number_of_questions"
-                            ,"formula"
-                            ,"delivery"
-                            ,"payment"
-                            ,"payment_terms"
-                            ,'preorder'])
-            df=df.drop_duplicates()
-            # Save to csv
-            df.to_excel(current_working_directory+f'/{key}.xlsx', index=True)
             bar()
             time.sleep(1.5)
 except:
