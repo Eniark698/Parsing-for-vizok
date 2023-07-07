@@ -32,7 +32,7 @@ current_working_directory = os.getcwd()
 #connect to temp db
 import sqlite3
 con=sqlite3.connect(current_working_directory+'/temp.db')
-con.isolation_level=None
+#con.isolation_level=None
 cur=con.cursor()
 
 cur.execute('''create table if not exists temp_table(
@@ -53,7 +53,7 @@ cur.execute('''create table if not exists temp_table(
             category nvarchar(255)
 )''')
 
-
+con.commit()
 
 
 # Your profile path
@@ -127,8 +127,11 @@ try:
                     except:
                         continue
                     #block = block.encode('ascii', 'ignore').decode('unicode_escape')
-                    time.sleep(3)
+                   
+                    
+                    pageLoadCheck=WebDriverWait(driver, 3).until(EC.presence_of_element_located((By.XPATH, "(//h1)[1]"))).get_attribute("textContent").strip()
 
+                        
 
                     soup1 = BeautifulSoup(driver.page_source, 'html.parser')
                     try:
@@ -242,7 +245,7 @@ try:
                     
 
                     cur.execute(""" insert into temp_table values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""", data)
-                    
+                    con.commit()
 
 
 
