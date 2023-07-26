@@ -43,7 +43,6 @@ def run(playwright):
 
     
     context = browser.new_context(viewport=viewport_size)
-    page = context.new_page()
     
     for key, urls in links.items():
         for url in urls:
