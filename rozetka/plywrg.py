@@ -54,9 +54,10 @@ def run(playwright):
             while True:
                 try:
                     # Wait for a certain condition to be true
+                    button = page.wait_for_selector('rz-load-more.ng-star-inserted', timeout=7500)  # wait for 5 seconds
                     page.wait_for_function("document.querySelector('rz-load-more.ng-star-inserted').getAttribute('disabled') === null")
-                    button = page.wait_for_selector('rz-load-more.ng-star-inserted', timeout=5000)  # wait for 5 seconds
-                    button.click()
+                    
+                    page.click('rz-load-more.ng-star-inserted')
                 except:  # the button is no longer found or clickable
                     break
             

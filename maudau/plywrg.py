@@ -41,7 +41,7 @@ def run(playwright):
     browser = playwright.chromium.launch(headless=True)
 
     
-    context = browser.new_context()#viewport=viewport_size)
+    context = browser.new_context(viewport=viewport_size)
     page = context.new_page()
     base='https://maudau.com.ua/'
     page.goto(base) 
@@ -62,106 +62,112 @@ def run(playwright):
         category_name=soup1.find('div', class_='title').text
 
         subcategories = soup1.find_all('div', class_='wrapper__content')
-        with tqdm(total=len(subcategories), desc="Going through", bar_format="{l_bar}{bar} [ time left: {remaining} ]") as pbar:
-            for subcategory in subcategories:
-                subcategory_url=subcategory.find('a', class_='card__show-all').attrs['href']
-                subcategory_url=base[:-1]+subcategory_url
-                page2=context.new_page()
-                page2.goto(subcategory_url)
-                
+        
+        for subcategory in subcategories:
+            subcategory_url=subcategory.find('a', class_='card__show-all').attrs['href']
+            subcategory_url=base[:-1]+subcategory_url
+            page2=context.new_page()
+            page2.goto(subcategory_url)
+
+            #h1_element=page2.wait_for_selector('div.category-pagination-button', timeout=25000)
+            j=0
             
-                while True:
-                    try:
-                        # Wait for a certain condition to be true
-                        page2.wait_for_function("document.querySelector('div.category-pagination-button').getAttribute('disabled') === null")
-                        button = page2.wait_for_selector('div.category-pagination-button', timeout=5000)  # wait for 5 seconds
-                        button.click()
-                    except:  # the button is no longer found or clickable
-                        break
+
+            while True:
+                try:
+                    button = page2.wait_for_selector('div.category-pagination-button', timeout=7500)
+                    page2.wait_for_function("document.querySelector('div.category-pagination-button').getAttribute('disabled') === null")
+                    #button = page2.wait_for_selector('div.category-pagination-button', timeout=7500)  # wait for 5 seconds
+                    page2.click('div.category-pagination-button')
+                    j+=1
+                except:
+                  # the button is no longer found or clickable
+                    break
+
+            print('\nclicked ' + str(j)+ ' times\n')
+
+            soup2 = BeautifulSoup(page2.content(), 'html.parser')
+            subcategory_name=soup2.find('div', class_='title').text
+
+
+            containers = soup2.find_all('div', class_='product product-tile product-tile')
+            for container in containers:
+                subcontainer=container.find('a', class_='no-underline product-link-image').attrs['href']
+                subcontainer=base[:-1]+subcontainer
+                page3=context.new_page()
+                page3.goto(subcontainer)
+
+
+                soup3 = BeautifulSoup(page3.content(), 'html.parser')
+                h1_element=page3.wait_for_selector('xpath=//h1', timeout=3000)
+
+                name=soup3.find('h1', class_='product-title').text
+
+                try:
+                    code=soup3.find('span', class_='article-value').text
+                    code=code[10:]
+                except:
+                    page3.close()
+
                 
-                soup2 = BeautifulSoup(page2.content(), 'html.parser')
-                subcategory_name=soup2.find('div', class_='title').text
+                try:
+                    new_code=name[name.find("(")+1:name.find(")")]
+                except:
+                    new_code=None
 
+                try:
+                    price=soup3.find('span', class_='price_final price_hot').text.replace(' ', '')
+                    price=int(re_findall(r'\d+', price)[0])
+                except:
+                    price=None
+            
 
-                containers = soup2.find_all('div', class_='product product-tile product-tile')
-                with alive_bar(len(containers)) as bar3:
-                    for container in containers:
-                        subcontainer=container.find('a', class_='no-underline product-link-image').attrs['href']
-                        subcontainer=base[:-1]+subcontainer
-                        page3=context.new_page()
-                        page3.goto(subcontainer)
+                try:
+                    old_price=soup3.find('span', class_='price_old').text.replace(' ', '')
+                    old_price=int(re_findall(r'\d+', old_price)[0])
+                except:
+                    old_price=None
 
-                        soup3 = BeautifulSoup(page3.content(), 'html.parser')
-                        h1_element=page3.wait_for_selector('xpath=//h1', timeout=3000)
+                try:
+                    status=soup3.find('span', class_='status').text.lstrip()
+                except:
+                    status=None
 
-                        name=soup3.find('h1', class_='product-title').text
+                try:
+                    seller=soup3.find('span', class_='merchant__name').text.strip()
+                except:
+                    seller=None
 
-                        try:
-                            code=soup3.find('span', class_='article-value').text
-                            code=code[10:]
-                        except:
-                            page3.close()
+                try:
+                    stars=float(soup3.find('span', class_='rating-count').text)
+                except:
+                    stars=None  
+                
+                try:
+                    review_number=soup3.find('button', class_='rating-btn').text.replace(' ', '')
+                    review_number = int(re_findall(r'\d+', review_number)[0])
+                except:
+                    review_number=None  
 
-                        
-                        try:
-                            new_code=name[name.find("(")+1:name.find(")")]
-                        except:
-                            new_code=None
-
-                        try:
-                            price=soup3.find('span', class_='price_final price_hot').text.replace(' ', '')
-                            price=int(re_findall(r'\d+', price)[0])
-                        except:
-                            price=None
+                data=(code
+                            ,stars
+                            ,name
+                            ,review_number
+                            ,seller
+                            ,price
+                            ,old_price
+                            ,status
+                            ,new_code
+                            ,category_name
+                            ,subcategory_name)
                     
 
-                        try:
-                            old_price=soup3.find('span', class_='price_old').text.replace(' ', '')
-                            old_price=int(re_findall(r'\d+', old_price)[0])
-                        except:
-                            old_price=None
-
-                        try:
-                            status=soup3.find('span', class_='status').text.lstrip()
-                        except:
-                            status=None
-
-                        try:
-                            seller=soup3.find('span', class_='merchant__name').text.strip()
-                        except:
-                            seller=None
-
-                        try:
-                            stars=float(soup3.find('span', class_='rating-count').text)
-                        except:
-                            stars=None  
-                        
-                        try:
-                            review_number=soup3.find('button', class_='rating-btn').text.replace(' ', '')
-                            review_number = int(re_findall(r'\d+', review_number)[0])
-                        except:
-                            review_number=None  
-
-                        data=(code
-                                    ,stars
-                                    ,name
-                                    ,review_number
-                                    ,seller
-                                    ,price
-                                    ,old_price
-                                    ,status
-                                    ,new_code
-                                    ,category_name
-                                    ,subcategory_name)
-                            
-
-                        cur.execute(""" insert into temp_table values (?,?,?,?,?,?,?,?,?,?,?)""", data)
-                        con.commit()
-                        
-                        page3.close()
-                        bar3()
-                page2.close()
-                pbar.update(1)
+                cur.execute(""" insert into temp_table values (?,?,?,?,?,?,?,?,?,?,?)""", data)
+                con.commit()
+                
+                page3.close()
+                
+            page2.close()
         page1.close()
         bar.next()
 
