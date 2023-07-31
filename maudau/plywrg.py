@@ -38,7 +38,7 @@ def run(playwright):
 
     viewport_size = {"width": 1920, "height": 1080}  # replace with your screen resolution
     global browser
-    browser = playwright.chromium.launch(headless=True)
+    browser = playwright.chromium.launch(headless=False)
 
     
     context = browser.new_context(viewport=viewport_size)
@@ -77,7 +77,7 @@ def run(playwright):
                 try:
                     button = page2.wait_for_selector('div.category-pagination-button', timeout=7500)
                     page2.wait_for_function("document.querySelector('div.category-pagination-button').getAttribute('disabled') === null")
-                    #button = page2.wait_for_selector('div.category-pagination-button', timeout=7500)  # wait for 5 seconds
+                    button = page2.wait_for_selector('div.category-pagination-button', timeout=7500)  # wait for 5 seconds
                     page2.click('div.category-pagination-button')
                     j+=1
                 except:
