@@ -7,13 +7,13 @@ from alive_progress import alive_bar
 from re import findall as re_findall
 from progress.bar import Bar
 from tqdm import tqdm
-
+from os import getcwd
 
 
 
 def run(playwright):
     import sqlite3
-    con=sqlite3.connect('./maudau/temp.db')
+    con=sqlite3.connect(getcwd()+'/maudau/temp.db')
     #con.isolation_level=None
     cur=con.cursor()
 
@@ -181,7 +181,7 @@ except:
         browser.close()
     except:
         pass
-    f=open('./maudau/log.txt', 'a')
+    f=open(getcwd()+'/maudau/log.txt', 'a')
     f.write('----------------------------------------\n')
     f.write(format_exc())
     f.write('occurred on ' + str(datetime.now())+ '\n')

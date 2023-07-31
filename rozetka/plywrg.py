@@ -5,12 +5,13 @@ from bs4 import BeautifulSoup
 from traceback import format_exc
 from datetime import datetime
 from alive_progress import alive_bar
-
+from os import getcwd
 
 
 def run(playwright):
+    
     import sqlite3
-    con=sqlite3.connect('./temp.db')
+    con=sqlite3.connect(getcwd()+'/temp.db')
     #con.isolation_level=None
     cur=con.cursor()
 
@@ -209,7 +210,7 @@ except:
         browser.close()
     except:
         pass
-    f=open('./log.txt', 'a')
+    f=open(getcwd()+'./log.txt', 'a')
     f.write('----------------------------------------\n')
     f.write(format_exc())
     f.write('occurred on ' + str(datetime.now())+ '\n')
