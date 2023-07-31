@@ -38,7 +38,7 @@ def run(playwright):
 
     viewport_size = {"width": 1920, "height": 1080}  # replace with your screen resolution
     global browser
-    browser = playwright.chromium.launch(headless=False)
+    browser = playwright.chromium.launch(headless=True)
 
     
     context = browser.new_context(viewport=viewport_size)
