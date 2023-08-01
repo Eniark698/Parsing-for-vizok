@@ -38,7 +38,7 @@ def run(playwright):
 
     viewport_size = {"width": 1920, "height": 1080}  # replace with your screen resolution
     global browser
-    browser = playwright.chromium.launch(headless=True)
+    browser = playwright.chromium.launch(headless=False)
 
     
     context = browser.new_context(viewport=viewport_size)
@@ -67,7 +67,7 @@ def run(playwright):
             subcategory_url=subcategory.find('a', class_='card__show-all').attrs['href']
             subcategory_url=base[:-1]+subcategory_url
             page2=context.new_page()
-            page2.goto(subcategory_url)
+            #page2.goto(subcategory_url)
 
             while True:
                 try:
