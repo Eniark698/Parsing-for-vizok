@@ -69,7 +69,14 @@ def run(playwright):
             page2=context.new_page()
             page2.goto(subcategory_url)
 
-            #h1_element=page2.wait_for_selector('div.category-pagination-button', timeout=25000)
+            while True:
+                try:
+                    page2.goto(subcategory_url)       
+                except:
+                    time.sleep(5)
+                    continue
+                break
+            h1_element=page2.wait_for_selector('div.category-pagination-button', timeout=50000)
             j=0
             
 
