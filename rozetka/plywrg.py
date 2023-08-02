@@ -211,7 +211,7 @@ except:
         browser.close()
     except:
         pass
-    f=open(getcwd()+'./log.txt', 'a')
+    f=open(getcwd()+'/log.txt', 'a')
     f.write('----------------------------------------\n')
     f.write(format_exc())
     f.write('occurred on ' + str(datetime.now())+ '\n')
