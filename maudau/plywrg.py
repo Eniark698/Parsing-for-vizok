@@ -43,6 +43,7 @@ def run(playwright):
     
     context = browser.new_context(viewport=viewport_size)
     page = context.new_page()
+    page.set_default_timeout(180000)
     base='https://maudau.com.ua/'
     page.goto(base) 
 
@@ -56,6 +57,7 @@ def run(playwright):
             continue
         category_url=base[:-1]+category_url
         page1=context.new_page()
+        page1.set_default_timeout(180000)
         page1.goto(category_url)
         
         soup1 = BeautifulSoup(page1.content(), 'html.parser')
@@ -67,15 +69,10 @@ def run(playwright):
             subcategory_url=subcategory.find('a', class_='card__show-all').attrs['href']
             subcategory_url=base[:-1]+subcategory_url
             page2=context.new_page()
-            #page2.goto(subcategory_url)
+            page2.set_default_timeout(180000)
+            page2.goto(subcategory_url)
 
-            while True:
-                try:
-                    page2.goto(subcategory_url)       
-                except:
-                    time.sleep(5)
-                    continue
-                break
+            
             h1_element=page2.wait_for_selector('div.category-pagination-button', timeout=50000)
             j=0
             
@@ -102,6 +99,7 @@ def run(playwright):
                 subcontainer=container.find('a', class_='no-underline product-link-image').attrs['href']
                 subcontainer=base[:-1]+subcontainer
                 page3=context.new_page()
+                page3.set_default_timeout(180000)
                 page3.goto(subcontainer)
 
 
