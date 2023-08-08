@@ -8,8 +8,19 @@ from re import findall as re_findall
 from progress.bar import Bar
 from tqdm import tqdm
 from os import getcwd
+import re
 
+def find_indices(input_string, symbol):
+    return [i for i, char in enumerate(input_string) if char == symbol]
 
+def check_string(input_string):
+    # The Ukrainian alphabet consists of the following characters:
+    # А-Я, а-я, Є, є, Ґ, ґ, І, і, Ї, ї
+    pattern = r'[А-Яа-яЄєҐґІіЇї]'
+    if re.search(pattern, input_string):
+        return False
+    else:
+        return True
 
 def run(playwright):
     import sqlite3
@@ -85,9 +96,9 @@ def run(playwright):
 
             while True:
                 try:
-                    button = page2.wait_for_selector('div.category-pagination-button', timeout=7500)
+                    button = page2.wait_for_selector('div.category-pagination-button', timeout=25000)
                     page2.wait_for_function("document.querySelector('div.category-pagination-button').getAttribute('disabled') === null")
-                    button = page2.wait_for_selector('div.category-pagination-button', timeout=7500)  # wait for 5 seconds
+                    button = page2.wait_for_selector('div.category-pagination-button', timeout=25000)  # wait for 5 seconds
                     page2.click('div.category-pagination-button')
                     j+=1
                 except:
@@ -97,7 +108,7 @@ def run(playwright):
             print('\nclicked ' + str(j)+ ' times\n')
 
             soup2 = BeautifulSoup(page2.content(), 'html.parser')
-            subcategory_name=soup2.find('div', class_='title').text
+            subcategory_name=soup2.find('h1').text
 
 
             containers = soup2.find_all('div', class_='product product-tile product-tile')
@@ -122,9 +133,19 @@ def run(playwright):
                 except:
                     page3.close()
 
-                
+
                 try:
-                    new_code=name[name.find("(")+1:name.find(")")]
+                    new_code=None
+                    lb=find_indices(name, '(')
+                    rb=find_indices(name, ')')
+
+                    for iter in range(min(len(lb), len(rb))):
+                        try_code=name[lb[iter]+1:rb[iter]]
+
+                        if check_string(try_code):
+                            new_code=try_code 
+                        else:
+                            continue
                 except:
                     new_code=None
 
