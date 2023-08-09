@@ -54,7 +54,7 @@ def run(playwright):
     
     context = browser.new_context(viewport=viewport_size)
     page = context.new_page()
-    page.set_default_timeout(180000)
+    page.set_default_timeout(300000)
     base='https://maudau.com.ua/'
     page.goto(base) 
     page.wait_for_load_state('load')
@@ -70,7 +70,7 @@ def run(playwright):
             continue
         category_url=base[:-1]+category_url
         page1=context.new_page()
-        page1.set_default_timeout(500000)
+        page1.set_default_timeout(300000)
         page1.goto(category_url)
         page1.wait_for_load_state('load')
 
@@ -84,21 +84,21 @@ def run(playwright):
             subcategory_url=subcategory.find('a', class_='card__show-all').attrs['href']
             subcategory_url=base[:-1]+subcategory_url
             page2=context.new_page()
-            page2.set_default_timeout(500000)
+            page2.set_default_timeout(300000)
             page2.goto(subcategory_url)
             page2.wait_for_load_state('load')
 
 
             
-            h1_element=page2.wait_for_selector('div.category-pagination-button', timeout=50000)
+            h1_element=page2.wait_for_selector('div.category-pagination-button', timeout=300000)
             j=0
             
 
             while True:
                 try:
-                    button = page2.wait_for_selector('div.category-pagination-button', timeout=25000)
+                    button = page2.wait_for_selector('div.category-pagination-button', timeout=30000)
                     page2.wait_for_function("document.querySelector('div.category-pagination-button').getAttribute('disabled') === null")
-                    button = page2.wait_for_selector('div.category-pagination-button', timeout=25000)  # wait for 5 seconds
+                    button = page2.wait_for_selector('div.category-pagination-button', timeout=30000)  # wait for 5 seconds
                     page2.click('div.category-pagination-button')
                     j+=1
                 except:
@@ -116,14 +116,14 @@ def run(playwright):
                 subcontainer=container.find('a', class_='no-underline product-link-image').attrs['href']
                 subcontainer=base[:-1]+subcontainer
                 page3=context.new_page()
-                page3.set_default_timeout(500000)
+                page3.set_default_timeout(300000)
                 page3.goto(subcontainer)
                 page3.wait_for_load_state('load')
 
 
 
                 soup3 = BeautifulSoup(page3.content(), 'html.parser')
-                h1_element=page3.wait_for_selector('xpath=//h1', timeout=3000)
+                h1_element=page3.wait_for_selector('xpath=//h1', timeout=300000)
 
                 name=soup3.find('h1', class_='product-title').text
 
