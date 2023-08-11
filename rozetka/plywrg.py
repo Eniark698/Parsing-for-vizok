@@ -57,6 +57,7 @@ def run(playwright):
                 delivery nvarchar(255),
                 preorder nvarchar(255),
                 new_code nvarchar(255),
+                renew_code nvarchar(255),
                 category_1st_lvl nvarchar(255),
                 category_2nd_lvl nvarchar(255),
                 category_3rd_lvl nvarchar(255),
@@ -80,7 +81,6 @@ def run(playwright):
             page = context.new_page()
             page.set_default_timeout(300000)
             page.goto(url) 
-            time.sleep(1)
             page.wait_for_load_state('load')
 
             j=0
@@ -125,9 +125,23 @@ def run(playwright):
                     new_page.wait_for_load_state('load')
                     
                     h1_element=new_page.wait_for_selector('xpath=//h1', timeout=300000)
-                    h1_element=new_page.wait_for_selector('xpath=//h1', timeout=300000)
                     
+                    
+                    cur_url=new_page.url
+                    array_index_1=find_indices(cur_url, '/')
+                    part_url=cur_url[array_index_1[-3]+1:array_index_1[-2]]
 
+                    array_index_2=find_indices(part_url, '_')
+                    array_index_3=find_indices(part_url, '-')
+                    
+                    
+                    if array_index_2!=[]:
+                        renew_code=part_url[array_index_2[-1]+1:]
+                    elif array_index_3!=[]:
+                        renew_code=part_url[array_index_3[-1]+1:]
+                    else:
+                        renew_code=part_url
+                    
 
                     soup1 = BeautifulSoup(new_page.content(), 'html.parser')
                     try:
@@ -140,7 +154,8 @@ def run(playwright):
 
                     try: 
                         name=soup1.find('h1', class_='product__title').text.strip()
-                    except:
+                    except Exception as e:
+                        print(e)
                         name=None
                         # new_page.close()
                         # continue
@@ -297,6 +312,7 @@ def run(playwright):
                                     ,delivery
                                     ,preorder
                                     ,new_code
+                                    ,renew_code
                                     ,mult_cat[0]
                                     ,mult_cat[1]
                                     ,mult_cat[2]
@@ -304,7 +320,7 @@ def run(playwright):
                                     )
                         
 
-                        cur.execute(""" insert into temp_table values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""", data)
+                        cur.execute(""" insert into temp_table values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""", data)
                         con.commit()
 
 
