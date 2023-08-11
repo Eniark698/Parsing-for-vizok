@@ -74,12 +74,13 @@ def run(playwright):
 
     
     context = browser.new_context(viewport=viewport_size)#viewport=viewport_size)
-    
+    time.sleep(10)
     for key, urls in links.items():
         for url in urls:
             page = context.new_page()
             page.set_default_timeout(300000)
             page.goto(url) 
+            time.sleep(1)
             page.wait_for_load_state('load')
 
             j=0
@@ -125,7 +126,7 @@ def run(playwright):
                     
                     h1_element=new_page.wait_for_selector('xpath=//h1', timeout=300000)
                     h1_element=new_page.wait_for_selector('xpath=//h1', timeout=300000)
-                    time.sleep(2)
+                    
 
 
                     soup1 = BeautifulSoup(new_page.content(), 'html.parser')
@@ -159,21 +160,23 @@ def run(playwright):
                     except:
                         new_code=None
 
+                    if new_code==None:
+                        code_array_1=[None]
+                    else:
+                        code_array_1=[]
+                        code_array=new_code.split('/')
 
-                    code_array_1=[]
-                    code_array=new_code.split('/')
+        
+                        for iter in code_array:
+                            array_new=iter.split('_')
+                            for item in array_new:
+                                code_array_1.append(item)
 
-      
-                    for iter in code_array:
-                        array_new=iter.split('_')
-                        for item in array_new:
-                            code_array_1.append(item)
-
-                    try:
-                        code_array_1.remove('1')
-                    except:
-                        pass
-
+                        try:
+                            code_array_1.remove('1')
+                        except:
+                            pass
+                    
 
 
 
