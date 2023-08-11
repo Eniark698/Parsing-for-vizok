@@ -49,7 +49,7 @@ def run(playwright):
 
     viewport_size = {"width": 1920, "height": 1080}  # replace with your screen resolution
     global browser
-    browser = playwright.firefox.launch(headless=True)
+    browser = playwright.chromium.launch(headless=False)
 
     
     context = browser.new_context(viewport=viewport_size)
@@ -125,7 +125,11 @@ def run(playwright):
                 soup3 = BeautifulSoup(page3.content(), 'html.parser')
                 h1_element=page3.wait_for_selector('xpath=//h1', timeout=300000)
 
-                name=soup3.find('h1', class_='product-title').text
+                try:
+                    name=soup3.find('h1', class_='product-title').text
+                except:
+                    page3.close()
+                    continue
 
                 try:
                     code=soup3.find('span', class_='article-value').text
