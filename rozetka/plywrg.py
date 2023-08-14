@@ -372,7 +372,7 @@ def run(playwright):
                     # Close the new page
                     new_page.close()
                     bar()
-
+                    
 
                     
 
