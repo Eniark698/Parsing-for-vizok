@@ -2,8 +2,16 @@
 
 
 #All links
-links={'Господарські_товари':['https://rozetka.com.ua/ua/odnorazovaya-posuda/c4581182/'
-                                     ,'https://rozetka.com.ua/ua/tovari-po-uhodu-za-odegdoy/c4652737/'
+links={'Господарські_товари':['https://rozetka.com.ua/ua/bumaga-tualetnaya/c4624983/'
+                              ,'https://rozetka.com.ua/ua/bumazhnie-polotenca/c4624976/'
+                               ,'https://rozetka.com.ua/ua/salfetki/c4624990/'
+                                ,'https://rozetka.com.ua/ua/salfetki-dlya-uborki/c4581476/'
+                                 ,'https://rozetka.com.ua/ua/pakety-dlia-musora/c4581462/'
+                                  ,'https://rozetka.com.ua/ua/pishchevaya-upakovka/c4238910/'
+                                   ,'https://rozetka.com.ua/ua/perchatki/c4581483/'
+                                    ,'https://rozetka.com.ua/ua/gubki-kuhonnie/c4581168/'
+                                     ,'https://rozetka.com.ua/ua/odnorazovaya-posuda/c4581182/'
+                                      ,'https://rozetka.com.ua/ua/tovari-po-uhodu-za-odegdoy/c4652737/'
                                        ,'https://rozetka.com.ua/ua/sumki-hozyaystvennie/c4653192/'
                                         ,'https://rozetka.com.ua/ua/nakladki-na-unitaz/c4653213/' ]
 

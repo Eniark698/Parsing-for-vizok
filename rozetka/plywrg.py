@@ -9,7 +9,16 @@ from os import getcwd
 import re
 
 
+def rebuild():
+    try:
+        browser.close()
+    except:
+        pass
 
+
+    browser = playwright.chromium.launch(headless=True)
+    context = browser.new_context(viewport=viewport_size)
+    return browser, context
 
 def find_indices_str(input_string, substring):
     return [i for i in range(len(input_string)) if input_string.startswith(substring, i)]
@@ -55,7 +64,7 @@ def run(playwright):
                 number_of_questions int,
                 formula nvarchar(255),
                 delivery nvarchar(255),
-                preorder nvarchar(255),
+                preorder nvarchar(500),
                 new_code nvarchar(255),
                 renew_code nvarchar(255),
                 category_1st_lvl nvarchar(255),
@@ -68,20 +77,29 @@ def run(playwright):
 
 
 
-
+    global viewport_size
     viewport_size = {"width": 1920, "height": 1080}  # replace with your screen resolution
     global browser
-    browser = playwright.chromium.launch(headless=True)
 
+    browser,context = rebuild()
     
-    context = browser.new_context(viewport=viewport_size)#viewport=viewport_size)
     time.sleep(10)
+    iter_index=0
     for key, urls in links.items():
+        
         for url in urls:
+            iter_index+=1
+
+            if iter_index%3==0:
+                browser,context = rebuild()
+                print('rebuild')
             page = context.new_page()
             page.set_default_timeout(300000)
             page.goto(url) 
             page.wait_for_load_state('load')
+
+
+
 
             j=0
             while True:
@@ -110,6 +128,25 @@ def run(playwright):
                 mult_cat.append(el.text)
             mult_cat.append(last_cat)
             print(mult_cat)
+
+            try:
+                mult_cat[1]
+            except:
+                mult_cat.append(None)
+
+            try:
+                mult_cat[2]
+            except:
+                mult_cat.append(None)
+
+
+            try:
+                mult_cat[3]
+            except:
+                mult_cat.append(None)
+
+
+
             # Get all review containers
             containers = soup.find_all('li', class_='catalog-grid__cell catalog-grid__cell_type_slim ng-star-inserted')
 
@@ -125,6 +162,7 @@ def run(playwright):
                     new_page.wait_for_load_state('load')
                     
                     h1_element=new_page.wait_for_selector('xpath=//h1', timeout=300000)
+                    
                     
                     
                     cur_url=new_page.url
@@ -151,12 +189,15 @@ def run(playwright):
                     except:
                         code=None
 
-
+                    
                     try: 
                         name=soup1.find('h1', class_='product__title').text.strip()
-                    except Exception as e:
-                        print(e)
-                        name=None
+                    except:
+                        try:
+                            name=soup1.find('h1', class_='product__title-left product__title-collapsed ng-star-inserted').text.strip()
+                        except Exception as e:
+                            print(e)
+                            name=None
                         # new_page.close()
                         # continue
 
@@ -174,6 +215,8 @@ def run(playwright):
                                 continue
                     except:
                         new_code=None
+
+
 
                     if new_code==None:
                         code_array_1=[None]
@@ -245,10 +288,12 @@ def run(playwright):
 
                     #getting likes
                     try:
+                        #p1_element=new_page.wait_for_selector('xpath=/html/body/app-root/div/div/rz-product/div/rz-product-tab-main/div[1]/div[1]/div[2]/rz-product-main-info/div[1]/div[1]/div[2]/app-goods-wishlist/div/p', timeout=10000)
                         likes_count=int(soup1.find('p', class_='wish-count-text ng-star-inserted').text)
                     except:
                         likes_count=None
                     
+
                     #finding status
                     try:
                         status=soup1.find('p', class_='status-label status-label--green ng-star-inserted').text.lstrip()
@@ -322,11 +367,16 @@ def run(playwright):
 
                         cur.execute(""" insert into temp_table values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""", data)
                         con.commit()
-
+                    
 
                     # Close the new page
                     new_page.close()
                     bar()
+
+
+                    
+
+
             page.close()
                 
 
