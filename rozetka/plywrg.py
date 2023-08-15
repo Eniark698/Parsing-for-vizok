@@ -10,14 +10,15 @@ import re
 
 
 def rebuild():
+    global  browser, context
     try:
         browser.close()
     except:
         pass
 
 
-    browser = playwright.chromium.launch(headless=True)
-    context = browser.new_context(viewport=viewport_size)
+    browser = playwright.chromium.launch(headless=True, args=['--no-sandbox', '--disable-setuid-sandbox', '--disable-webgl', '--disable-extensions', '--disable-gpu'])
+    context = browser.new_context(viewport=viewport_size, user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3")
     return browser, context
 
 def find_indices_str(input_string, substring):
@@ -64,7 +65,7 @@ def run(playwright):
                 number_of_questions int,
                 formula nvarchar(255),
                 delivery nvarchar(255),
-                preorder nvarchar(500),
+                preorder nvarchar(1000),
                 new_code nvarchar(255),
                 renew_code nvarchar(255),
                 category_1st_lvl nvarchar(255),
@@ -77,27 +78,27 @@ def run(playwright):
 
 
 
-    global viewport_size
-    viewport_size = {"width": 1920, "height": 1080}  # replace with your screen resolution
-    global browser
+
+
+    global browser, new_page, page, context, viewport_size
+    viewport_size = {"width": 1920, "height": 1080} 
 
     browser,context = rebuild()
     
-    time.sleep(10)
-    iter_index=0
+  
     for key, urls in links.items():
         
         for url in urls:
-            iter_index+=1
 
-            if iter_index%3==0:
-                browser,context = rebuild()
-                print('rebuild')
+
+            
+            browser,context = rebuild()
+            print('rebuilding')
             page = context.new_page()
             page.set_default_timeout(300000)
             page.goto(url) 
-            page.wait_for_load_state('load')
-
+            page.wait_for_load_state('networkidle')
+            
 
 
 
@@ -130,6 +131,12 @@ def run(playwright):
             print(mult_cat)
 
             try:
+                mult_cat[0]
+            except:
+                mult_cat.append(None)
+
+
+            try:
                 mult_cat[1]
             except:
                 mult_cat.append(None)
@@ -159,7 +166,8 @@ def run(playwright):
                     new_page = context.new_page()
                     new_page.set_default_timeout(300000)
                     new_page.goto(block)
-                    new_page.wait_for_load_state('load')
+                    
+                    new_page.wait_for_load_state('networkidle')
                     
                     h1_element=new_page.wait_for_selector('xpath=//h1', timeout=300000)
                     
@@ -391,6 +399,20 @@ try:
     with sync_playwright() as playwright:
         run(playwright)
 except:
+
+    try:
+        page.screenshot(path='./rozetka/screenshot_page.png')
+    except:
+        pass
+
+
+    try:
+        new_page.screenshot(path='./rozetka/screenshot_newpage.png')
+    except:
+        pass
+
+
+
     try:
         browser.close()
     except:

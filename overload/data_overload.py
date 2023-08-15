@@ -10,7 +10,7 @@ user=base64.b64decode(user.decode("utf-8")).decode()
 password=base64.b64decode(password.decode("utf-8")).decode()
 
 # Connect to the SQLite database
-sqlite_conn = sqlite3.connect('D:/projects/temp_base_vizok_maudau/temp.db')
+sqlite_conn = sqlite3.connect('D:/projects/temp_base_vizok_maudau/part2.db')
 sqlite_cursor = sqlite_conn.cursor()
 
 # Connect to the SQL Server database
