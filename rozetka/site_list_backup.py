@@ -2,7 +2,7 @@
 
 
 #All links
-links={'Господарські_товари':['https://rozetka.com.ua/ua/bumaga-tualetnaya/c4624983/'
+links=['https://rozetka.com.ua/ua/bumaga-tualetnaya/c4624983/'
                               ,'https://rozetka.com.ua/ua/bumazhnie-polotenca/c4624976/'
                                ,'https://rozetka.com.ua/ua/salfetki/c4624990/'
                                 ,'https://rozetka.com.ua/ua/salfetki-dlya-uborki/c4581476/'
@@ -13,9 +13,9 @@ links={'Господарські_товари':['https://rozetka.com.ua/ua/bumag
                                      ,'https://rozetka.com.ua/ua/odnorazovaya-posuda/c4581182/'
                                       ,'https://rozetka.com.ua/ua/tovari-po-uhodu-za-odegdoy/c4652737/'
                                        ,'https://rozetka.com.ua/ua/sumki-hozyaystvennie/c4653192/'
-                                        ,'https://rozetka.com.ua/ua/nakladki-na-unitaz/c4653213/' ]
+                                        ,'https://rozetka.com.ua/ua/nakladki-na-unitaz/c4653213/' 
 
-       ,'Побутова_хімія':['https://rozetka.com.ua/ua/sredstva-dlya-stirki4632103/c4632103/'
+     ,'https://rozetka.com.ua/ua/sredstva-dlya-stirki4632103/c4632103/'
                           ,'https://rozetka.com.ua/ua/konditsioneri-opolaskivateli-smyagchiteli-vodi/c4632012/'
                           ,'https://rozetka.com.ua/ua/pyatnovivoditeli-otbelivateli/c4632005/'
                           ,'https://rozetka.com.ua/ua/antistatiki-sredstva-dlya-glagki-podkrahmalivateli/c4632019/'
@@ -90,8 +90,8 @@ links={'Господарські_товари':['https://rozetka.com.ua/ua/bumag
                           ,'https://rozetka.com.ua/ua/sredstva-dlya-tehniki/c4625098/naznachenie-72102=355587/'
                           ,'https://rozetka.com.ua/ua/sredstva-dlya-tehniki/c4625098/naznachenie-72102=320301/'
                           ,'https://rozetka.com.ua/ua/sredstva-dlya-tehniki/c4625098/naznachenie-72102=dlya-sushilnih-mashin/'
-       ]
-       ,'Дитячі_товари':['https://rozetka.com.ua/ua/detskie-vannochki-i-aksessuary/c197325/'
+       
+       ,'https://rozetka.com.ua/ua/detskie-vannochki-i-aksessuary/c197325/'
                                         ,'https://rozetka.com.ua/ua/detskie-gorshki-i-sidenya/c197393/'
                                         ,'https://rozetka.com.ua/ua/kosmetika-po-uhody-dlia-detei/c266262/72578=305360/'
                                         ,'https://rozetka.com.ua/ua/kosmetika-po-uhody-dlia-detei/c266262/72578=305378/'
@@ -101,9 +101,9 @@ links={'Господарські_товари':['https://rozetka.com.ua/ua/bumag
                                         ,'https://rozetka.com.ua/ua/detskie-smesi/c2586302/'
                                         ,'https://rozetka.com.ua/ua/detskie-kashi/c2586312/'
                                         ,'https://rozetka.com.ua/ua/detskoe-pyure/c2586332/'
-       ]
        
-        ,'Товари_для_кішок':['https://rozetka.com.ua/ua/food_for_cats/c1461212/'
+       
+        ,'https://rozetka.com.ua/ua/food_for_cats/c1461212/'
                              ,'https://rozetka.com.ua/ua/fillers_for_toilets/c2336637/62011=197552/'
                              ,'https://rozetka.com.ua/ua/uhod-i-gigiena/c3504864/64063=216894/'
                              ,'https://rozetka.com.ua/ua/vitamins_for_pets/c2986023/61619=193828/'
@@ -118,8 +118,8 @@ links={'Господарські_товари':['https://rozetka.com.ua/ua/bumag
                              ,'https://rozetka.com.ua/ua/shlei-dlia-zhivotnih/c4626659/86589=421319/'
                              ,'https://rozetka.com.ua/ua/dverci-dlia-koshek-i-sobak/c4626639/naznachenie-86379=dlja-koshek/'
                              ,'https://rozetka.com.ua/ua/vetpreparaty/c4627687/vid-givotnogo=koshki/'
-        ]
-        ,'Товари_для_собак':['https://rozetka.com.ua/ua/food_for_dogs/c1461202/'
+        
+        ,'https://rozetka.com.ua/ua/food_for_dogs/c1461202/'
                              ,'https://rozetka.com.ua/ua/vitamins_for_pets/c2986023/61619=193821/'
                              ,'https://rozetka.com.ua/ua/posuda-dlya-jivotnyh/c2183122/57802=156072/'
                              ,'https://rozetka.com.ua/ua/uhod-i-gigiena/c3504864/64063=216901/'
@@ -136,8 +136,8 @@ links={'Господарські_товари':['https://rozetka.com.ua/ua/bumag
                              ,'https://rozetka.com.ua/ua/aksessuary-k-tualetam-dlia-zhivotnih/c3779482/'
                              ,'https://rozetka.com.ua/ua/vetpreparaty/c4627687/vid-givotnogo=sobaki/'
                              ,'https://rozetka.com.ua/ua/tablichki/c4648150/'
-                             ] 
-        ,"Краса_та_здоров'я":['https://rozetka.com.ua/ua/krem-dlya-litsa/c4657262/naznachenie-201949=antivozrastnoe;56277=dermatokosmetika/'
+                              
+        ,'https://rozetka.com.ua/ua/krem-dlya-litsa/c4657262/naznachenie-201949=antivozrastnoe;56277=dermatokosmetika/'
                               ,'https://rozetka.com.ua/ua/sredstvo-dlya-umivaniya/c4657274/naznachenie-201949=antivozrastnoe;56277=dermatokosmetika/'
                               ,'https://rozetka.com.ua/ua/sivorotka-dlya-litsa/c4657286/naznachenie-201949=antivozrastnoe;56277=dermatokosmetika/'
                               ,'https://rozetka.com.ua/ua/tonik-dlya-litsa/c4657316/naznachenie-201949=antivozrastnoe;56277=dermatokosmetika/'
@@ -316,10 +316,10 @@ links={'Господарські_товари':['https://rozetka.com.ua/ua/bumag
                               ,'https://rozetka.com.ua/ua/materiali-dlya-depilyatsii/c4641504/'
                               ,'https://rozetka.com.ua/ua/parafinoterapiya/c4629207/'
                               ,'https://rozetka.com.ua/ua/voskovie-poloski/c4657884/'
-                              ,'https://rozetka.com.ua/ua/krem-dlya-depilyatsii/c4657890/']
+                              ,'https://rozetka.com.ua/ua/krem-dlya-depilyatsii/c4657890/'
 
                               
-                           ,'Продукти': ['https://sexshop.rozetka.com.ua/ua/'
+
                                   ,'https://rozetka.com.ua/ua/sushenie-ovoshchi/c4649322/'
                                   ,'https://rozetka.com.ua/ua/riba-i-moreprodukti/c4672173/'
                                   ,'https://rozetka.com.ua/ua/polufabrikati/c4660633/'
@@ -430,4 +430,4 @@ links={'Господарські_товари':['https://rozetka.com.ua/ua/bumag
 
         
                              
-                             }
+                             
