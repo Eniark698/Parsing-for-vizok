@@ -127,7 +127,7 @@ def run(links_subset,shared_links):
             page = context.new_page()
             page.set_default_timeout(300000)
             page.goto(url) 
-            page.wait_for_load_state('networkidle')
+            page.wait_for_load_state('networkidle', timeout=300000)
             
 
 
@@ -197,10 +197,12 @@ def run(links_subset,shared_links):
                 new_page = context.new_page()
                 new_page.set_default_timeout(300000)
                 new_page.goto(block)
+
+
                 
-                new_page.wait_for_load_state('networkidle')
-                
+                new_page.wait_for_load_state('networkidle',timeout=300000)
                 h1_element=new_page.wait_for_selector('xpath=//h1', timeout=300000)
+                
                 
                 
                 
@@ -472,7 +474,7 @@ def run(links_subset,shared_links):
 
 if __name__ == "__main__":
     try:
-        num_processes = 10
+        num_processes = 8
         manager = Manager()
 
 
