@@ -124,6 +124,8 @@ def run(links_subset,shared_links):
             
             browser,context = rebuild(browser)
             print('rebuilding')
+            start = time.time()
+
             page = context.new_page()
             page.set_default_timeout(300000)
             page.goto(url) 
@@ -237,7 +239,10 @@ def run(links_subset,shared_links):
                     try:
                         name=soup1.find('h1', class_='product__title-left product__title-collapsed ng-star-inserted').text.strip()
                     except Exception as e:
+                        new_page.screenshot(path="./screenshot.png")
+
                         print(e)
+                        print(url)
                         name=None
                     # new_page.close()
                     # continue
@@ -450,8 +455,11 @@ def run(links_subset,shared_links):
                     
 
                         
-
+            end = time.time()
+            total=end-start
             print('category done,', 'clicked on ' ,iterator,' unique items from ', url)
+            print('total time is ', total)
+            print('time per item = ', total/iterator)
             page.close()
 
             try:
@@ -474,7 +482,7 @@ def run(links_subset,shared_links):
 
 if __name__ == "__main__":
     try:
-        num_processes = 8
+        num_processes = 9
         manager = Manager()
 
 
