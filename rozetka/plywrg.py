@@ -11,6 +11,27 @@ from alive_progress import alive_bar
 from os import getcwd
 import re
 
+def print_console_message(msg):
+    print(msg.text)
+
+def goto_with_retry(page, url, max_retries=10, delay_between_retries=60):
+    for attempt in range(1, max_retries + 1):
+        try:
+           
+            page.set_default_timeout(60000)
+            page.wait_for_load_state('domcontentloaded', timeout=60000)
+            page.goto(url)
+            #print("Page loaded successfully.")
+            return True  # Page loaded successfully, return True
+        except Exception as e:
+            page.on("console", print_console_message)
+            print(f"Attempt {attempt} of {max_retries}: Page load timed out, retrying after {delay_between_retries} seconds...")
+            time.sleep(delay_between_retries)  # Wait before trying again
+    print("Failed to load the page after max_retries.")
+    return False  # Page loading failed after max_retries, return False
+
+
+
 
 
 def split_urls(urls, num_splits):
@@ -55,10 +76,7 @@ def del_uah(price):
     return price
 
 def run(links_subset,shared_links):
-    """
-    Your existing run function, modified to accept a 'links_subset' parameter,
-    which is the subset of URLs this process will work on.
-    """
+ 
     with sync_playwright() as playwright:
         def rebuild(browser):
 
@@ -69,7 +87,7 @@ def run(links_subset,shared_links):
             viewport_size = {"width": 1920, "height": 1080} 
 
 
-            browser = playwright.chromium.launch(headless=True, args=['--no-sandbox', '--disable-setuid-sandbox', '--disable-webgl', '--disable-extensions', '--disable-gpu'])
+            browser = playwright.chromium.launch(headless=False, args=['--no-sandbox', '--disable-setuid-sandbox', '--disable-webgl', '--disable-extensions', '--disable-gpu'])
             context = browser.new_context(viewport=viewport_size, user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3")
             return browser, context
     
@@ -123,13 +141,16 @@ def run(links_subset,shared_links):
 
             
             browser,context = rebuild(browser)
-            print('rebuilding')
+            
             start = time.time()
 
             page = context.new_page()
-            page.set_default_timeout(600000)
-            page.wait_for_load_state('networkidle', timeout=600000)
-            page.goto(url) 
+            success = goto_with_retry(page, url)
+            if success:
+                pass
+            else:
+                continue
+           
             
             
 
@@ -198,13 +219,19 @@ def run(links_subset,shared_links):
 
                 # Open a new page and navigate to the URL
                 new_page = context.new_page()
-                new_page.set_default_timeout(600000)
-                new_page.wait_for_load_state('networkidle', timeout=600000)
-                new_page.goto(block)
+
+                success_1 = goto_with_retry(new_page, block)
+                if success_1:
+                    pass
+                else:
+                    continue
+                
+                
+                
 
 
                 
-                new_page.wait_for_load_state('networkidle',timeout=300000)
+                
                 h1_element=new_page.wait_for_selector('xpath=//h1', timeout=300000)
                 
                 
@@ -484,7 +511,7 @@ def run(links_subset,shared_links):
 
 if __name__ == "__main__":
     try:
-        num_processes = 5
+        num_processes = 4
         manager = Manager()
 
 
@@ -520,6 +547,13 @@ if __name__ == "__main__":
 
         print("All processes are complete.")
     except:
+        shared_links=set(shared_links)
+        with open('./rozetka/result_url.py','w') as file_write:
+            file_write.write('links=[\n')
+            for urls in shared_links:
+                file_write.write("'"+urls + "',\n")
+            file_write.write(']\n')
+
         f=open(getcwd()+'/rozetka/log.txt', 'a')
         f.write('----------------------------------------\n')
         f.write(format_exc())
