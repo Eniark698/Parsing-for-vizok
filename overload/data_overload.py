@@ -10,7 +10,7 @@ user=base64.b64decode(user.decode("utf-8")).decode()
 password=base64.b64decode(password.decode("utf-8")).decode()
 
 # Connect to the SQLite database
-sqlite_conn = sqlite3.connect('D:/projects/temp_base_vizok_maudau/renew_part1.db')
+sqlite_conn = sqlite3.connect('D:/projects/vizok/google_shop/temp_name_without_barcode.db')
 sqlite_cursor = sqlite_conn.cursor()
 
 # Connect to the SQL Server database
@@ -25,7 +25,8 @@ rows = sqlite_cursor.fetchall()
 # Insert data into SQL Server table
 for row in rows:
     # Construct your INSERT query here
-    query = f"INSERT INTO Rozetka  VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
+    query = f"INSERT INTO temp_name_without_barcode  VALUES (?,?,?,?,?)"
+    #query = f"INSERT INTO Rozetka  VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
     sql_server_cursor.execute(query, row)
 
 sql_server_conn.commit()
