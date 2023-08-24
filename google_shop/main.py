@@ -27,6 +27,27 @@ cur.execute('''create table if not exists temp_table(
 
 con.commit()
 
+def get_xpath_of_element(page, element):
+    xpath = page.evaluate('''(element) => {
+        let getXPath = function(node) {
+            if (node.id !== '') {
+                return 'id("' + node.id + '")';
+            }
+            if (node === document.body) {
+                return node.tagName;
+            }
+            var count = 0;
+            var sibling;
+            for (sibling = node.previousSibling; sibling; sibling = sibling.previousSibling) {
+                if (sibling.nodeType === 1 && sibling.tagName === node.tagName) {
+                    count++;
+                }
+            }
+            return getXPath(node.parentNode) + '/' + node.tagName + (count ? '[' + (count+1) + ']' : '');
+        };
+        return getXPath(element);
+    }''', element)
+    return xpath
 
 def del_uah(price):
     match = re.search(r'([\d\s,]+)', price)
@@ -54,33 +75,98 @@ def scrap_google_shop(search_info,code):
         soup = BeautifulSoup(page.content(), 'html.parser')
         containers = soup.find_all('div', class_='KZmu8e Ehwxtb')
        
+
+        div_selectors='h3.sh-np__product-title translate-content'
+        photos='div. _-c_ main-image'
+        #element_count = len(page.query_selector_all(div_selectors))
         match_var=True
+        iter=0
         for container in containers:
-            #time.sleep(100)
-            try:
-                full_name = container.find('h3', class_='sh-np__product-title translate-content').text.strip()
-            except:
-                full_name=None
+            elements = page.query_selector_all(div_selectors)
+            elements[iter].click()
+
+
+            photo_elements = page.query_selector_all(photos)
             
             try:
-                price=container.find('b', class_='translate-content').text.strip().replace('\xa0', '')
+                page.click('a. _-p_')
+            except:
+                try:
+                    full_name = container.find('a', class_=' _-lV sh-t__title sh-t__title-popout shntl translate-content').text.strip()
+                except:
+                    full_name=None
+            
+            
+                try:
+                    price=container.find('span', class_='_-qm _-qi').text.strip().replace('\xa0', '')
+                    
+                    price=del_uah(price)
+                except:
+                    price=None
+
+                try:
+                    seller = container.find('div', class_='_-o0 _-oY').text.strip()
+                except:
+                    seller=None
+
+
+                with page.expect_popup() as popup_info:
+                    photo_elements[iter].click()
+                new_page = popup_info.page
+
+                item_url=new_page.url
+                new_page.close()
+
+            else:
+                soup_new = BeautifulSoup(page.content(), 'html.parser')
+                subcontainers = soup_new.find_all('tr', class_='sh-osd__offer-row')
                 
-                price=del_uah(price)
-            except:
-                price=None
+                try:
+                    full_name = soup_new.find('a', class_='BvQan sh-t__title sh-t__title-pdp translate-content').text.strip()
+                except:
+                    full_name=None
 
-            try:
-                seller = container.find('span', class_='E5ocAb').text.strip()
-            except:
-                seller=None
+                new_selectors='h3.sh-np__product-title translate-content'
+                iter1=0
+                for subcontainer in subcontainers:
+                    new_elements = page.query_selector_all(new_selectors)
+                    new_elements[iter1].click()
+                    try:
+                        price=subcontainer.find('span', class_='g9WBQb fObmGc').text.strip().replace('\xa0', '')
+                        
+                        price=del_uah(price)
+                    except:
+                        price=None
 
-            try:
-                item_url=container.find('a', class_='shntl').attrs['href']
-                pos=item_url.find('https://')
-                item_url=item_url[pos:]
-            except:
-                item_url=None
+                    try:
+                        seller = subcontainer.find('a', class_='b5ycib shntl').text.strip()
+                    except:
+                        seller=None
 
+                    with page.expect_popup() as popup_info:
+                        new_elements[iter].click()
+                    new_page = popup_info.page
+                    item_url=new_page.url
+                    new_page.close()
+
+                iter1+=1
+
+
+
+                page.goBack()
+
+
+            # try:
+            #     item_url=container.find('a', class_='shntl').attrs['href']
+            #     pos=item_url.find('https://')
+            #     item_url=item_url[pos:]
+            # except:
+            #     item_url=None
+            iter+=1
+            #elemen_sel = container.query_selector('h3.sh-np__product-title translate-content')
+            
+
+            
             # try:
             #     list_sites=container.find('a', class_='iXEZD')
             # except:
