@@ -27,27 +27,6 @@ cur.execute('''create table if not exists temp_table(
 
 con.commit()
 
-def get_xpath_of_element(page, element):
-    xpath = page.evaluate('''(element) => {
-        let getXPath = function(node) {
-            if (node.id !== '') {
-                return 'id("' + node.id + '")';
-            }
-            if (node === document.body) {
-                return node.tagName;
-            }
-            var count = 0;
-            var sibling;
-            for (sibling = node.previousSibling; sibling; sibling = sibling.previousSibling) {
-                if (sibling.nodeType === 1 && sibling.tagName === node.tagName) {
-                    count++;
-                }
-            }
-            return getXPath(node.parentNode) + '/' + node.tagName + (count ? '[' + (count+1) + ']' : '');
-        };
-        return getXPath(element);
-    }''', element)
-    return xpath
 
 def del_uah(price):
     match = re.search(r'([\d\s,]+)', price)
@@ -67,55 +46,60 @@ df['name_without_barcode'] = df['name'].str.replace(r'\(.*?\)', '', regex=True).
 
 def scrap_google_shop(search_info,code):
     with sync_playwright() as p:
+        viewport_size = {"width": 1920, "height": 1080} 
         browser = p.chromium.launch(headless=False)
-        context = browser.new_context()
+        context = browser.new_context(viewport=viewport_size)
         page = context.new_page()
         page.goto(f"https://www.google.com/search?tbm=shop&q={search_info}")
+        page.wait_for_load_state('domcontentloaded', timeout=15000) 
         page_url=page.url
         soup = BeautifulSoup(page.content(), 'html.parser')
         containers = soup.find_all('div', class_='KZmu8e Ehwxtb')
-       
 
-        div_selectors='h3.sh-np__product-title translate-content'
-        photos='div. _-c_ main-image'
+        photos_first='h3.tAxDx'
+        photos='div. _-c- main-image'
         #element_count = len(page.query_selector_all(div_selectors))
         match_var=True
         iter=0
         for container in containers:
-            elements = page.query_selector_all(div_selectors)
+
+            elements = page.query_selector_all(photos_first)
+
             elements[iter].click()
+            time.sleep(10)
 
 
-            photo_elements = page.query_selector_all(photos)
+            #photo_elements = page.query_selector_all(photos)
             
-            try:
-                page.click('a. _-p_')
-            except:
+
+            divs = container.find_all('div', class_='_-oV')
+            if len(divs)==1:
+
                 try:
-                    full_name = container.find('a', class_=' _-lV sh-t__title sh-t__title-popout shntl translate-content').text.strip()
+                    full_name = container.find('a', id_=' _-lW sh-t__title sh-t__title-popout shntl translate-content').text.strip()
                 except:
                     full_name=None
             
             
                 try:
-                    price=container.find('span', class_='_-qm _-qi').text.strip().replace('\xa0', '')
+                    price=container.find('span', class_='_-qn _-qj').text.strip().replace('\xa0', '')
                     
                     price=del_uah(price)
                 except:
                     price=None
 
                 try:
-                    seller = container.find('div', class_='_-o0 _-oY').text.strip()
+                    seller = container.find('div', class_='_-o1 _-oZ').text.strip()
                 except:
                     seller=None
 
+                item_url=None
+                # with page.expect_popup() as popup_info:
+                #     photo_elements[iter].click()
+                # new_page = popup_info.page
 
-                with page.expect_popup() as popup_info:
-                    photo_elements[iter].click()
-                new_page = popup_info.page
-
-                item_url=new_page.url
-                new_page.close()
+                # item_url=new_page.url
+                # new_page.close()
 
             else:
                 soup_new = BeautifulSoup(page.content(), 'html.parser')
@@ -153,7 +137,7 @@ def scrap_google_shop(search_info,code):
 
 
 
-                page.goBack()
+                page.go_back()
 
 
             # try:
