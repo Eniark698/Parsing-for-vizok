@@ -135,7 +135,7 @@ cur.execute('''create table if not exists temp_table(
                     store_reviews int,
                     store_reviews_link varchar(3000),
                     ProductPhotoUrl varchar(3000),
-                    compare_prices_link nvarchar(5000)
+                    compare_prices_link nvarchar(4000)
             );
                     ''')
 
@@ -152,10 +152,10 @@ con.commit()
 
 
 
-df=pd.read_excel(pwd+'/google_shop/file.xlsx',)
+df=pd.read_excel(pwd+'/google_shop/new_file.xlsx',)
 #df.rename(columns={'ТОП SKU для тесту Google shopping':'name'}, inplace=True)
 
-df['code'] = df['name'].str.extract(r'\((.*?)\)')
+df['code'] = df['name'].str.extract(r'\((\d+)\)')
 
 
 
@@ -170,13 +170,26 @@ for index, row in df.iterrows():
 
         SearchInfoCode=row['code']
 
-        Name=product['title'].strip()
+        try:
+            Name=product['title'].strip()
+        except:
+            Name=None
 
-        Seller=product['store'].strip()
+        try:
+            Seller=product['store'].strip()
+        except:
+            Seller=None
 
-        ItemOnStoreUrl=product['store_link'].strip()
 
-        ItemOnGoogleShopUrl=product['product_link'].strip()
+        try:
+            ItemOnStoreUrl=product['store_link'].strip()
+        except:
+            ItemOnStoreUrl=None
+
+        try:
+            ItemOnGoogleShopUrl=product['product_link'].strip()
+        except:
+            ItemOnGoogleShopUrl=None
 
         try:
             Price=del_uah(product['price'])
@@ -188,7 +201,10 @@ for index, row in df.iterrows():
         except:
             DeliveryPrice=None
 
-        DeliveryInfo=product['delivery'].strip()
+        try:
+            DeliveryInfo=product['delivery'].strip()
+        except:
+            DeliveryInfo=None
 
         try:
             ProductRating=float(product['product_rating'].strip().replace(',', '.'))
