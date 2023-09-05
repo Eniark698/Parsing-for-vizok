@@ -4,9 +4,29 @@ import numpy as np
 import pandas as pd
 import os
 import time
-from pprint import pprint
+import random
+from datetime import datetime
+from multiprocessing import Process
+import math
 
 
+
+
+
+def split_dataframe(df, num_splits):
+    """
+    Splits the DataFrame into a specified number of chunks.
+
+    Parameters:
+        df (DataFrame): The DataFrame to be split.
+        num_splits (int): The number of chunks to split the DataFrame into.
+
+    Returns:
+        list: A list of chunks, where each chunk is a DataFrame.
+    """
+    avg = math.ceil(len(df) / num_splits)
+    split_dfs = [df.iloc[i * avg: (i + 1) * avg] for i in range(num_splits)]
+    return split_dfs
 
 
 def del_uah(price):
@@ -23,14 +43,28 @@ def del_uah(price):
 def del_deliver(price):
     a=price.find(":")
     b=price.find('грн')
-    price=float(price[a+1:b-1].replace(' ', '').replace(',', '.'))
+    try:
+        if a==-1 or b==-1: 
+            price=0
+        else:
+            price=float(price[a+1:b-1].replace(' ', '').replace(',', '.'))
+            if price==None:
+                price=0
+    except:
+        price=0
     return price
 
 def request_scrap(param_item):
 
-    proxies = {
-    'HTTPS': '20.219.183.188:3129'
-    }
+    proxies = [
+    {'HTTPS': '144.49.99.190:8080'},
+    {'HTTPS': '144.49.99.170:8080'},
+    {'HTTPS': '144.49.99.215:8080'},
+    {'HTTPS': '103.22.238.173:8080'},
+    {'HTTPS': '8.219.97.248:80'},
+    {'HTTPS':'91.107.247.115:4000'},
+    ]
+    proxies_choose=random.choice(proxies)
     # https://docs.python-requests.org/en/master/user/quickstart/#custom-headers
     headers = {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36"
@@ -43,7 +77,7 @@ def request_scrap(param_item):
         "tbm": "shop"   # google search shopping tab
     }
 
-    html = requests.get("https://www.google.com/search", params=params, headers=headers, timeout=30, proxies=proxies)
+    html = requests.get("https://www.google.com/search", params=params, headers=headers, timeout=30, proxies=proxies_choose)
     selector = Selector(html.text)
 
     def get_original_images():
@@ -75,21 +109,14 @@ def request_scrap(param_item):
             product_rating = result.css(".NzUzee .Rsc7Yb::text").get()      
             product_reviews = result.css(".NzUzee > div::text").get()       
             price = result.css(".a8Pemb::text").get()       
-            store = result.css(".aULzUe::text").get()       
-            store_link = "https://www.google.com" + result.css(".eaGTj div a::attr(href)").get()        
+            store = result.css(".aULzUe::text").get()     
+            try:  
+                store_link = "https://www.google.com" + result.css(".eaGTj div a::attr(href)").get()   
+            except:
+                store_link= None
             delivery = result.css(".vEjMR::text").get()
 
-            store_rating_value = result.css(".zLPF4b .XEeQ2 .QIrs8::text").get()
-            # https://regex101.com/r/kAr8I5/1
-            store_rating = re.search(r"^\S+", store_rating_value).group() if store_rating_value else store_rating_value
-
-            store_reviews_value = result.css(".zLPF4b .XEeQ2 .ugFiYb::text").get()
-            # https://regex101.com/r/axCQAX/1
-            store_reviews = re.search(r"^\(?(\S+)", store_reviews_value).group() if store_reviews_value else store_reviews_value
-
-            store_reviews_link_value = result.css(".zLPF4b .XEeQ2 .QhE5Fb::attr(href)").get()
-            store_reviews_link = "https://www.google.com" + store_reviews_link_value if store_reviews_link_value else store_reviews_link_value
-
+           
             compare_prices_link_value = result.css(".Ldx8hd .iXEZD::attr(href)").get()      
             compare_prices_link = "https://www.google.com" + compare_prices_link_value if compare_prices_link_value else compare_prices_link_value
 
@@ -100,152 +127,133 @@ def request_scrap(param_item):
                 "product_reviews": product_reviews,
                 "price": price,
                 "store": store,
-                "thumbnail": thumbnail,
                 "store_link": store_link,
                 "delivery": delivery,
-                "store_rating": store_rating,
-                "store_reviews": store_reviews,
-                "store_reviews_link": store_reviews_link,
                 "compare_prices_link": compare_prices_link,
             })
         return json.dumps(google_shopping_data, indent=2, ensure_ascii=False)
     return get_suggested_search_data()
  
 
-pwd=os.getcwd()
+
+def run(df):
+    import sqlite3
+    con=sqlite3.connect('./google_shop/temp_name_all.db') 
+    cur=con.cursor()
+
+    for index, row in df.iterrows():
+    
+        large_str=json.loads(request_scrap(row['name']))
+        for product in large_str:
+
+            SearchInfoName=row['name']
+
+            SearchInfoCode=str(row['code'])
+
+            try:
+                Name=product['title'].strip()
+            except:
+                Name=None
+
+            try:
+                Seller=product['store'].strip()
+            except:
+                Seller=None
 
 
-import sqlite3
-con=sqlite3.connect(pwd+'/google_shop/temp_name.db')
-#con.isolation_level=None
-cur=con.cursor()
-cur.execute('''create table if not exists temp_table(
-                    search_info_name nvarchar(500),
-                    search_info_code varchar(250),
-                    title nvarchar(500),
-                    store nvarchar(255),
-                    item_on_store_url varchar(3000),
-                    item_on_google_shop_url varchar(3000),
-                    price float,
-                    delivery_price float,
-                    delivery_info nvarchar(500),
-                    product_rating float,
-                    product_reviews int,
-                    store_rating float,
-                    store_reviews int,
-                    store_reviews_link varchar(3000),
-                    ProductPhotoUrl varchar(3000),
-                    compare_prices_link nvarchar(4000)
-            );
-                    ''')
+            try:
+                ItemOnStoreUrl=product['store_link'].strip()
+            except:
+                ItemOnStoreUrl=None
 
-con.commit()
+            try:
+                ItemOnGoogleShopUrl=product['product_link'].strip()
+            except:
+                ItemOnGoogleShopUrl=None
 
+            try:
+                Price=del_uah(product['price'])
+            except:
+                Price=None
 
+            try:
+                DeliveryPrice=del_deliver(product['delivery'])
+            except:
+                DeliveryPrice=None
 
+            try:
+                DeliveryInfo=product['delivery'].strip()
+            except:
+                DeliveryInfo=None
 
+            try:
+                ProductRating=float(product['product_rating'].strip().replace(',', '.'))
+            except:
+                ProductRating=None
 
+            
+            try:
+                ComparePricesLink=product['compare_prices_link'].strip()
+            except:
+                ComparePricesLink=None
 
-
-
-
-
-
-
-df=pd.read_excel(pwd+'/google_shop/new_file.xlsx',)
-#df.rename(columns={'ТОП SKU для тесту Google shopping':'name'}, inplace=True)
-
-df['code'] = df['name'].str.extract(r'\((\d+)\)')
-
-
-
-
-
-for index, row in df.iterrows():
-   
-    large_str=json.loads(request_scrap(row['name']))
-    for product in large_str:
-
-        SearchInfoName=row['name']
-
-        SearchInfoCode=row['code']
-
-        try:
-            Name=product['title'].strip()
-        except:
-            Name=None
-
-        try:
-            Seller=product['store'].strip()
-        except:
-            Seller=None
+            data=(SearchInfoName,SearchInfoCode,Name, Seller,ItemOnStoreUrl,ItemOnGoogleShopUrl, Price,DeliveryPrice, DeliveryInfo, ProductRating,ComparePricesLink )
+            #print(product['product_rating'])
+            #print(product['product_reviews'])
+            #print(product['store_rating'])
+            #print(product['store_reviews'])
+            cur.execute(""" insert into temp_table values (?,?,?,?,?,?,?,?,?,?,?)""", data)
+            
+            con.commit()
 
 
-        try:
-            ItemOnStoreUrl=product['store_link'].strip()
-        except:
-            ItemOnStoreUrl=None
 
-        try:
-            ItemOnGoogleShopUrl=product['product_link'].strip()
-        except:
-            ItemOnGoogleShopUrl=None
+def main():
+    import sqlite3
+    con=sqlite3.connect('./google_shop/temp_name_all.db')
+    #con.isolation_level=None
+    
+    cur=con.cursor()
+    
+    cur.execute('''create table if not exists temp_table(
+                        search_info_name nvarchar(500),
+                        search_info_code varchar(250),
+                        title nvarchar(500),
+                        store nvarchar(255),
+                        item_on_store_url varchar(3000),
+                        item_on_google_shop_url varchar(3000),
+                        price float,
+                        delivery_price float,
+                        delivery_info nvarchar(500),
+                        product_rating float,
+                        compare_prices_link nvarchar(4000)
+                        );
+                        ''')
 
-        try:
-            Price=del_uah(product['price'])
-        except:
-            Price=None
+    con.commit()
 
-        try:
-            DeliveryPrice=del_deliver(product['delivery'])
-        except:
-            DeliveryPrice=None
 
-        try:
-            DeliveryInfo=product['delivery'].strip()
-        except:
-            DeliveryInfo=None
+    num_processes = 10
 
-        try:
-            ProductRating=float(product['product_rating'].strip().replace(',', '.'))
-        except:
-            ProductRating=None
+    dataframe=pd.read_excel('./google_shop/file_temp.xlsx',dtype=str)
+    # Convert your global 'links' list to a list that can be shared between processes
+    #dataframe['code'] = dataframe['code'].astype(str)
+    # Split the URLs into 10 separate chunks
+    split_df = split_dataframe(dataframe, num_processes)
 
-        try:
-            ProductReviews=int(product['product_reviews'].strip().replace(',', '.'))
-        except:
-            ProductReviews=None
+    # Create 10 separate processes
+    processes = []
+    for i in range(num_processes):
+        p = Process(target=run, args=(split_df[i],))
+        processes.append(p)
+    
+    # Start all the processes
+    for p in processes:
+        p.start()
+    
+    # Wait for all processes to complete
+    for p in processes:
+        p.join()
 
-        try:
-            StoreRating=int(product['store_rating'].strip().replace(',', '.'))
-        except:
-            StoreRating=None
 
-        try:
-            StoreReviews=int(product['store_reviews'].strip().replace(',', '.'))
-        except:
-            StoreReviews=None
-
-        try:
-            StoreReviewsLink=product['store_reviews_link'].strip()
-        except:
-            StoreReviewsLink=None
-
-        try:
-            ProductPhotoUrl=product['thumbnail'].strip()
-        except:
-            ProductPhotoUrl=None
-
-        try:
-            ComparePricesLink=product['compare_prices_link'].strip()
-        except:
-            ComparePricesLink=None
-
-        data=(SearchInfoName,SearchInfoCode,Name, Seller,ItemOnStoreUrl,ItemOnGoogleShopUrl, Price,DeliveryPrice, DeliveryInfo, ProductRating,  ProductReviews, 
-              StoreRating,StoreReviews,StoreReviewsLink,ProductPhotoUrl,ComparePricesLink )
-        #print(product['product_rating'])
-        #print(product['product_reviews'])
-        #print(product['store_rating'])
-        #print(product['store_reviews'])
-        cur.execute(""" insert into temp_table values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""", data)
-        con.commit()
+    print("All processes are complete in main2.")

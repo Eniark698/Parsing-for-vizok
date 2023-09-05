@@ -2,3 +2,6 @@ __pycache__/
 log.txt
 secrets_file.py
 secrets_file.cpython-311.pyc
+file_temp.xlsx
+temp_name_all.db
+temp_name.db
