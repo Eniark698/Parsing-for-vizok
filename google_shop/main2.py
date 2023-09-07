@@ -54,16 +54,16 @@ def del_deliver(price):
         price=0
     return price
 
-def request_scrap(param_item):
+def request_scrap(param_item, proxies):
 
-    proxies = [
-    {'HTTPS': '144.49.99.190:8080'},
-    {'HTTPS': '144.49.99.170:8080'},
-    {'HTTPS': '144.49.99.215:8080'},
-    {'HTTPS': '103.22.238.173:8080'},
-    {'HTTPS': '8.219.97.248:80'},
-    {'HTTPS':'91.107.247.115:4000'},
-    ]
+    # proxies = [
+    # {'HTTPS': '144.49.99.190:8080'},
+    # {'HTTPS': '144.49.99.170:8080'},
+    # {'HTTPS': '144.49.99.215:8080'},
+    # {'HTTPS': '103.22.238.173:8080'},
+    # {'HTTPS': '8.219.97.248:80'},
+    # {'HTTPS':'91.107.247.115:4000'},
+    # ]
     proxies_choose=random.choice(proxies)
     # https://docs.python-requests.org/en/master/user/quickstart/#custom-headers
     headers = {
@@ -136,14 +136,14 @@ def request_scrap(param_item):
  
 
 
-def run(df):
+def run(df, proxies):
     import sqlite3
     con=sqlite3.connect('./google_shop/temp_name_all.db') 
     cur=con.cursor()
 
     for index, row in df.iterrows():
     
-        large_str=json.loads(request_scrap(row['name']))
+        large_str=json.loads(request_scrap(row['name'],proxies))
         for product in large_str:
 
             SearchInfoName=row['name']
@@ -233,6 +233,35 @@ def main():
     con.commit()
 
 
+
+
+
+
+
+
+    response = requests.get("https://raw.githubusercontent.com/clarketm/proxy-list/master/proxy-list-raw.txt")
+    response.raise_for_status()  # Check that the request was successful
+
+    with open("./proxy-list.txt", "w") as file:
+        file.write(response.text)
+
+
+
+
+
+
+
+
+
+
+    proxies = []
+    with open("./proxy-list.txt") as file:
+        for line in file:
+            proxy = line.strip()
+            if proxy:
+                scheme = "https" if "8080" in proxy else "http"
+                proxies.append({scheme: proxy})
+
     num_processes = 10
 
     dataframe=pd.read_excel('./google_shop/file_temp.xlsx',dtype=str)
@@ -244,7 +273,7 @@ def main():
     # Create 10 separate processes
     processes = []
     for i in range(num_processes):
-        p = Process(target=run, args=(split_df[i],))
+        p = Process(target=run, args=(split_df[i],proxies))
         processes.append(p)
     
     # Start all the processes

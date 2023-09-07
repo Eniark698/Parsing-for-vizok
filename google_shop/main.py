@@ -11,8 +11,8 @@ from traceback import format_exc
 import logging
 from logging.handlers import TimedRotatingFileHandler
 log_formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
-log_file = '/home/administrator/logs/log_GoogleShop_all.log'
-#log_file = './google_shop/log_GoogleShop_all.log'
+#log_file = '/home/administrator/logs/GoogleShop/GoogleShop_all.log'
+log_file = './google_shop/log_GoogleShop_all.log'
 handler = TimedRotatingFileHandler(log_file, when="midnight", interval=1, backupCount=30)
 handler.setFormatter(log_formatter)
 logger = logging.getLogger()
@@ -31,6 +31,7 @@ def main() -> None:
         try:
             os.remove('./google_shop/temp_name_all.db')
             os.remove('./google_shop/file_temp.xlsx')
+            os.remove('./google_shop/proxy-list.txt')
         except:
             pass
         start=time.time()
@@ -40,17 +41,21 @@ def main() -> None:
         try:
             os.remove('./google_shop/temp_name_all.db')
             os.remove('./google_shop/file_temp.xlsx')
+            os.remove('./google_shop/proxy-list.txt')
         except:
             pass
     except:
+        logger.setLevel(logging.ERROR)
         logger.error('{}'.format(format_exc()))
         logger.error('\n not completed\n')
-        logger.error('\n' + str(time.time()-start) + ' exec. time\n')
+        logger.error('\n exec time: ' + str(time.time()-start))
     else:
-        logger.error('successfull completed\n')
-        logger.error('\n' + str(time.time()-start) + ' exec. time\n')
+        logger.setLevel(logging.INFO)
+        logger.info('successfull completed\n')
+        logger.info('\n exec time: ' + str(time.time()-start))
 
 
 if __name__=='__main__':
     main()
+
 
