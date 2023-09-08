@@ -20,12 +20,12 @@ def gather():
 
   # Fetch data from SQLite table
   df=pd.read_sql("""
-                  SELECT distinct trim(replace(replace([Name],'	',''),'  ','')) as name, Barcode as code
+                  SELECT  distinct trim(replace(replace([Name],'	',''),'  ','')) as name, Barcode as code
                   FROM [bi_fop_storozhuk].[dbo].[ProductAdministrative]
                   order by name asc, code asc;
                  """,sql_server_conn)
 
-  df.to_excel('./google_shop/file_temp.xlsx', index=False)
+  df.to_excel('./google_shop/file_temp.xls', index=False)
 
   del(df)
   print('created excel file')

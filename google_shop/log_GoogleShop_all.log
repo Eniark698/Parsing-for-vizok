@@ -1,8 +1,131 @@
-2023-09-07 15:41:38,751 - INFO - successfull completed
+2023-09-08 16:56:18,744 - ERROR - 1.09.74.59:476: Error at creating: 
+2023-09-08 16:57:28,356 - ERROR - successfull completed
 
-2023-09-07 15:41:38,751 - INFO - 
- exec time: 35.8988835811615
-2023-09-07 15:47:57,140 - INFO - successfull completed
+2023-09-08 16:57:28,356 - ERROR - 
+ exec time: 16.920400142669678
+2023-09-08 16:58:06,717 - ERROR - 1.09.74.59:476: Error at creating: 
+2023-09-08 16:59:07,973 - ERROR - successfull completed
 
-2023-09-07 15:47:57,141 - INFO - 
- exec time: 54.37901496887207
+2023-09-08 16:59:07,973 - ERROR - 
+ exec time: 17.52175736427307
+2023-09-08 17:03:25,692 - ERROR - 1.09.74.59:476: Error at creating: 
+2023-09-08 17:04:02,655 - ERROR - 1.09.74.59:476: Error at creating: 
+2023-09-08 17:04:24,631 - ERROR - successfull completed
+
+2023-09-08 17:04:24,631 - ERROR - 
+ exec time: 6.962340354919434
+2023-09-08 17:07:13,298 - ERROR - Traceback (most recent call last):
+  File "d:/projects/vizok/google_shop/main.py", line 44, in main
+    main2(prx_l)
+  File "d:\projects\vizok\google_shop\main2.py", line 275, in main
+    p.join()
+  File "C:\Users\nmozol\.pyenv\pyenv-win\versions\3.6.8\lib\multiprocessing\process.py", line 124, in join
+    res = self._popen.wait(timeout)
+  File "C:\Users\nmozol\.pyenv\pyenv-win\versions\3.6.8\lib\multiprocessing\popen_spawn_win32.py", line 80, in wait
+    res = _winapi.WaitForSingleObject(int(self._handle), msecs)
+KeyboardInterrupt
+
+2023-09-08 17:07:13,298 - ERROR - 
+ not completed
+
+2023-09-08 17:07:13,299 - ERROR - 
+ exec time: 92.33298254013062
+2023-09-08 17:10:41,933 - ERROR - Traceback (most recent call last):
+  File "d:/projects/vizok/google_shop/main.py", line 44, in main
+    main2(prx_l)
+  File "d:\projects\vizok\google_shop\main2.py", line 275, in main
+    p.join()
+  File "C:\Users\nmozol\.pyenv\pyenv-win\versions\3.6.8\lib\multiprocessing\process.py", line 124, in join
+    res = self._popen.wait(timeout)
+  File "C:\Users\nmozol\.pyenv\pyenv-win\versions\3.6.8\lib\multiprocessing\popen_spawn_win32.py", line 80, in wait
+    res = _winapi.WaitForSingleObject(int(self._handle), msecs)
+KeyboardInterrupt
+
+2023-09-08 17:10:41,934 - ERROR - 
+ not completed
+
+2023-09-08 17:10:41,934 - ERROR - 
+ exec time: 99.05668139457703
+2023-09-08 17:11:15,276 - ERROR - Traceback (most recent call last):
+  File "d:/projects/vizok/google_shop/main.py", line 44, in main
+    main2(prx_l)
+  File "d:\projects\vizok\google_shop\main2.py", line 275, in main
+    p.join()
+  File "C:\Users\nmozol\.pyenv\pyenv-win\versions\3.6.8\lib\multiprocessing\process.py", line 124, in join
+    res = self._popen.wait(timeout)
+  File "C:\Users\nmozol\.pyenv\pyenv-win\versions\3.6.8\lib\multiprocessing\popen_spawn_win32.py", line 80, in wait
+    res = _winapi.WaitForSingleObject(int(self._handle), msecs)
+KeyboardInterrupt
+
+2023-09-08 17:11:15,276 - ERROR - 
+ not completed
+
+2023-09-08 17:11:15,277 - ERROR - 
+ exec time: 16.680556058883667
+2023-09-08 17:11:56,610 - ERROR - 1.09.74.59:476: Error at creating: 
+2023-09-08 17:13:35,980 - ERROR - Traceback (most recent call last):
+  File "d:/projects/vizok/google_shop/main.py", line 44, in main
+    main2(prx_l)
+  File "d:\projects\vizok\google_shop\main2.py", line 275, in main
+    p.join()
+  File "C:\Users\nmozol\.pyenv\pyenv-win\versions\3.6.8\lib\multiprocessing\process.py", line 124, in join
+    res = self._popen.wait(timeout)
+  File "C:\Users\nmozol\.pyenv\pyenv-win\versions\3.6.8\lib\multiprocessing\popen_spawn_win32.py", line 80, in wait
+    res = _winapi.WaitForSingleObject(int(self._handle), msecs)
+KeyboardInterrupt
+
+2023-09-08 17:13:35,980 - ERROR - 
+ not completed
+
+2023-09-08 17:13:35,980 - ERROR - 
+ exec time: 36.07358431816101
+2023-09-08 17:14:44,804 - ERROR - Traceback (most recent call last):
+  File "d:/projects/vizok/google_shop/main.py", line 44, in main
+    main2(prx_l)
+  File "d:\projects\vizok\google_shop\main2.py", line 275, in main
+    p.join()
+  File "C:\Users\nmozol\.pyenv\pyenv-win\versions\3.6.8\lib\multiprocessing\process.py", line 124, in join
+    res = self._popen.wait(timeout)
+  File "C:\Users\nmozol\.pyenv\pyenv-win\versions\3.6.8\lib\multiprocessing\popen_spawn_win32.py", line 80, in wait
+    res = _winapi.WaitForSingleObject(int(self._handle), msecs)
+KeyboardInterrupt
+
+2023-09-08 17:14:44,804 - ERROR - 
+ not completed
+
+2023-09-08 17:14:44,804 - ERROR - 
+ exec time: 40.43243765830994
+2023-09-08 17:15:05,604 - ERROR - 1.09.74.59:476: Error at creating: 
+2023-09-08 17:15:30,588 - ERROR - 1.09.74.59:476: Error at creating: 
+2023-09-08 17:16:00,376 - ERROR - Traceback (most recent call last):
+  File "d:/projects/vizok/google_shop/main.py", line 44, in main
+    main2(prx_l)
+  File "d:\projects\vizok\google_shop\main2.py", line 275, in main
+    p.join()
+  File "C:\Users\nmozol\.pyenv\pyenv-win\versions\3.6.8\lib\multiprocessing\process.py", line 124, in join
+    res = self._popen.wait(timeout)
+  File "C:\Users\nmozol\.pyenv\pyenv-win\versions\3.6.8\lib\multiprocessing\popen_spawn_win32.py", line 80, in wait
+    res = _winapi.WaitForSingleObject(int(self._handle), msecs)
+KeyboardInterrupt
+
+2023-09-08 17:16:00,377 - ERROR - 
+ not completed
+
+2023-09-08 17:16:00,377 - ERROR - 
+ exec time: 14.994841575622559
+2023-09-08 17:16:26,701 - ERROR - Traceback (most recent call last):
+  File "d:/projects/vizok/google_shop/main.py", line 44, in main
+    main2(prx_l)
+  File "d:\projects\vizok\google_shop\main2.py", line 276, in main
+    p.join()
+  File "C:\Users\nmozol\.pyenv\pyenv-win\versions\3.6.8\lib\multiprocessing\process.py", line 124, in join
+    res = self._popen.wait(timeout)
+  File "C:\Users\nmozol\.pyenv\pyenv-win\versions\3.6.8\lib\multiprocessing\popen_spawn_win32.py", line 80, in wait
+    res = _winapi.WaitForSingleObject(int(self._handle), msecs)
+KeyboardInterrupt
+
+2023-09-08 17:16:26,702 - ERROR - 
+ not completed
+
+2023-09-08 17:16:26,702 - ERROR - 
+ exec time: 12.744722127914429

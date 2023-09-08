@@ -2,15 +2,11 @@ import requests, json, re
 from parsel import Selector
 import numpy as np
 import pandas as pd
-import os
 import time
 import random
-from datetime import datetime
 from multiprocessing import Process
 import math
-
-
-
+import urllib
 
 
 def split_dataframe(df, num_splits):
@@ -54,21 +50,29 @@ def del_deliver(price):
         price=0
     return price
 
-def request_scrap(param_item, proxies):
+def request_scrap(param_item, proxy_list):
 
-    # proxies = [
-    # {'HTTPS': '144.49.99.190:8080'},
-    # {'HTTPS': '144.49.99.170:8080'},
-    # {'HTTPS': '144.49.99.215:8080'},
-    # {'HTTPS': '103.22.238.173:8080'},
-    # {'HTTPS': '8.219.97.248:80'},
-    # {'HTTPS':'91.107.247.115:4000'},
-    # ]
-    proxies_choose=random.choice(proxies)
-    # https://docs.python-requests.org/en/master/user/quickstart/#custom-headers
-    headers = {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36"
+    
+
+    proxies = {
+       'http': 'socks5h://127.0.0.1:9150',
+       'https': 'socks5h://127.0.0.1:9150',
     }
+    proxies_choose=random.choice(proxy_list)
+    # https://docs.python-requests.org/en/master/user/quickstart/#custom-headers
+
+    user_agents = [
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36'
+        ,'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.131 Safari/537.36'
+        ,'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+        ,'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.93 Safari/537.36'
+        ,'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101 Firefox/91.0'
+        ,'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:90.0) Gecko/20100101 Firefox/90.0'
+    ]
+
+    # headers = {
+    #     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36"
+    # }
     # https://docs.python-requests.org/en/master/user/quickstart/#passing-parameters-in-urls
     params = {
         "q": param_item,
@@ -76,10 +80,14 @@ def request_scrap(param_item, proxies):
         "gl": "ua",     # country of the search, US -> USA
         "tbm": "shop"   # google search shopping tab
     }
+    
 
-    html = requests.get("https://www.google.com/search", params=params, headers=headers, timeout=30, proxies=proxies_choose)
+    
+    time.sleep(random.uniform(1,10))
+
+    html = requests.get("https://www.google.com/search", params=params, headers={'User-Agent':random.choice(user_agents)}, timeout=30, proxies=proxies_choose)
     selector = Selector(html.text)
-
+    print(html.status_code)
     def get_original_images():
         all_script_tags = "".join(
             [
@@ -136,14 +144,15 @@ def request_scrap(param_item, proxies):
  
 
 
-def run(df, proxies):
+def run(df,proxy_list):
     import sqlite3
     con=sqlite3.connect('./google_shop/temp_name_all.db') 
     cur=con.cursor()
 
     for index, row in df.iterrows():
-    
-        large_str=json.loads(request_scrap(row['name'],proxies))
+        
+        large_str=json.loads(request_scrap(row['name'],proxy_list))
+        print(large_str)
         for product in large_str:
 
             SearchInfoName=row['name']
@@ -208,11 +217,10 @@ def run(df, proxies):
 
 
 
-def main():
+def main(proxy_list):
     import sqlite3
     con=sqlite3.connect('./google_shop/temp_name_all.db')
     #con.isolation_level=None
-    
     cur=con.cursor()
     
     cur.execute('''create table if not exists temp_table(
@@ -231,40 +239,23 @@ def main():
                         ''')
 
     con.commit()
+    cur.execute('''delete from  temp_table;''')
+
+    con.commit()
+
+   
+    
+    
 
 
 
 
 
 
-
-
-    response = requests.get("https://raw.githubusercontent.com/clarketm/proxy-list/master/proxy-list-raw.txt")
-    response.raise_for_status()  # Check that the request was successful
-
-    with open("./proxy-list.txt", "w") as file:
-        file.write(response.text)
-
-
-
-
-
-
-
-
-
-
-    proxies = []
-    with open("./proxy-list.txt") as file:
-        for line in file:
-            proxy = line.strip()
-            if proxy:
-                scheme = "https" if "8080" in proxy else "http"
-                proxies.append({scheme: proxy})
-
+    
     num_processes = 10
-
-    dataframe=pd.read_excel('./google_shop/file_temp.xlsx',dtype=str)
+    
+    dataframe=pd.read_excel('./google_shop/file_temp.xls',dtype=str)
     # Convert your global 'links' list to a list that can be shared between processes
     #dataframe['code'] = dataframe['code'].astype(str)
     # Split the URLs into 10 separate chunks
@@ -273,7 +264,7 @@ def main():
     # Create 10 separate processes
     processes = []
     for i in range(num_processes):
-        p = Process(target=run, args=(split_df[i],proxies))
+        p = Process(target=run, args=(split_df[i],proxy_list))
         processes.append(p)
     
     # Start all the processes

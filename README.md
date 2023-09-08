@@ -1,0 +1,1 @@
+numpy pandas requests parsel pyodbc proxybroker openpyxl xlrd xlwt pusocks
