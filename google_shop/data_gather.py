@@ -20,7 +20,7 @@ def gather():
 
   # Fetch data from SQLite table
   df=pd.read_sql("""
-                  SELECT  distinct trim(replace(replace([Name],'	',''),'  ','')) as name, Barcode as code
+                  SELECT  distinct top (10) trim(replace(replace([Name],'	',''),'  ','')) as name, Barcode as code
                   FROM [bi_fop_storozhuk].[dbo].[ProductAdministrative]
                   order by name asc, code asc;
                  """,sql_server_conn)

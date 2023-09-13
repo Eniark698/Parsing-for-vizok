@@ -11,7 +11,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-
+from selenium.common.exceptions import NoSuchElementException
 #from selenium_recaptcha_solver import RecaptchaSolver
 
 from threading import Thread
@@ -118,6 +118,7 @@ def request_scrap(param_item):
     options = webdriver.FirefoxOptions()
     options.profile = profile
     options.add_argument('--kiosk')
+    options.add_argument('--headless')
 
     browser = webdriver.Firefox(options=options)
 
@@ -142,8 +143,8 @@ def request_scrap(param_item):
     # # Create a new instance of the Firefox driver
     # browser = webdriver.Firefox()
 
-    browser.set_page_load_timeout(5)
-    browser.implicitly_wait(3)
+    browser.set_page_load_timeout(30)
+    browser.implicitly_wait(5)
 
     # with open('./temp/cookies.txt', 'r') as f:
     #     cookies=json.load(f)
@@ -156,7 +157,7 @@ def request_scrap(param_item):
 
     #page.set_user_agent(random.choice(user_agents))
     #url = "https://www.google.com/search?" + "&".join([f"{k}={v}" for k, v in params.items()])
-    url='https://www.google.com'
+    url='https://www.google.com/?tbm=shop'
     browser.get(url)
 
     time.sleep(random.uniform(1,2))
@@ -167,7 +168,7 @@ def request_scrap(param_item):
     search_input.send_keys(param_item)
     time.sleep(random.uniform(1,2))
     search_input.send_keys(Keys.RETURN)
-    time.sleep(random.uniform(1,2))
+    time.sleep(random.uniform(2,4))
     # solver = RecaptchaSolver(driver=browser)
     # recaptcha_iframe = browser.find_element(By.XPATH, '//iframe[@title="reCAPTCHA"]')
    
@@ -177,100 +178,109 @@ def request_scrap(param_item):
 
 
     # Wait until the "Shopping" link is present in the DOM
-    wait = WebDriverWait(browser, 5)
-    shopping_button = wait.until(EC.presence_of_element_located((By.XPATH, "//span[normalize-space(text())='Покупки']")))
+    # wait = WebDriverWait(browser, 30)
+    # shopping_button = wait.until(EC.presence_of_element_located((By.XPATH, "//span[normalize-space(text())='Покупки']")))
 
-    # Click the button
-    shopping_button.click()
+    # # Click the button
+    # shopping_button.click()
 
-    time.sleep(random.uniform(1,3))
+    # time.sleep(random.uniform(1,3))
 
+    info=[]
+    while True:
+        # Get page source to use with BeautifulSoup
+        page_source = browser.page_source
 
+        # Parse the page source with BeautifulSoup
+        soup = BeautifulSoup(page_source, 'html.parser')
 
-    # Get page source to use with BeautifulSoup
-    page_source = browser.page_source
-
-    # Parse the page source with BeautifulSoup
-    soup = BeautifulSoup(page_source, 'html.parser')
-
-    # Get all style elements
-    styles = soup.find_all('style')
-    
-    # Get CSS as a single string
-    css = '\n'.join([style.get_text() for style in styles])
-
-
+        # Get all style elements
+        styles = soup.find_all('style')
+        
+        # Get CSS as a single string
+        css = '\n'.join([style.get_text() for style in styles])
 
 
 
 
 
-    def get_original_images(soup):
-        all_script_tags = "".join(
-        [str(script).replace("</script>", "</script>\n") for script in soup.select("script")]
-    )
 
-        image_urls = []
 
-        for result in soup.select(".Qlx7of .sh-dgr__grid-result"):
-            data_pck = result.attrs.get('data-pck', '')
-            url_with_unicode = re.findall(rf"var\s?_u='(.*?)';var\s?_i='{data_pck}';", all_script_tags)
+        def get_original_images(soup):
+            all_script_tags = "".join(
+            [str(script).replace("</script>", "</script>\n") for script in soup.select("script")]
+        )
 
-            if url_with_unicode:
-                url_decode = bytes(url_with_unicode[0], 'ascii').decode('unicode-escape')
-                image_urls.append(url_decode)
+            image_urls = []
 
-        return image_urls
+            for result in soup.select(".Qlx7of .sh-dgr__grid-result"):
+                data_pck = result.attrs.get('data-pck', '')
+                url_with_unicode = re.findall(rf"var\s?_u='(.*?)';var\s?_i='{data_pck}';", all_script_tags)
 
-    def get_suggested_search_data():
-        google_shopping_data = []
+                if url_with_unicode:
+                    url_decode = bytes(url_with_unicode[0], 'ascii').decode('unicode-escape')
+                    image_urls.append(url_decode)
 
-        for result in soup.select(".Qlx7of .i0X6df"):
-            title = result.select_one(".tAxDx").get_text(strip=True) if result.select_one(".tAxDx") else None
-            product_link = "https://www.google.com" + result.select_one(".Lq5OHe")["href"] if result.select_one(".Lq5OHe") else None
+            return image_urls
 
-            product_rating_element = result.select_one(".NzUzee .Rsc7Yb")
-            product_rating = product_rating_element.get_text(strip=True) if product_rating_element else None
-
-            product_reviews_element = result.select_one(".NzUzee > div")
-            product_reviews = product_reviews_element.get_text(strip=True) if product_reviews_element else None
-
-            price_element = result.select_one(".a8Pemb")
-            price = price_element.get_text(strip=True) if price_element else None
-
-            store_element = result.select_one(".aULzUe")
-            store = store_element.get_text(strip=True) if store_element else None
-
-            store_link_element = result.select_one(".eaGTj div a")
-            store_link = "https://www.google.com" + store_link_element["href"] if store_link_element else None
-
-            delivery_element = result.select_one(".vEjMR")
-            delivery = delivery_element.get_text(strip=True) if delivery_element else None
-
-            compare_prices_link_element = result.select_one(".Ldx8hd .iXEZD")
-            compare_prices_link_value = compare_prices_link_element["href"] if compare_prices_link_element else None
-            compare_prices_link = "https://www.google.com" + compare_prices_link_value if compare_prices_link_value else None
-
-            google_shopping_data.append({
-                "title": title,
-                "product_link": product_link,
-                "product_rating": product_rating,
-                "product_reviews": product_reviews,
-                "price": price,
-                "store": store,
-                "store_link": store_link,
-                "delivery": delivery,
-                "compare_prices_link": compare_prices_link,
-            })
+        def get_suggested_search_data():
+            google_shopping_data = []
             
-            return json.dumps(google_shopping_data, indent=2, ensure_ascii=False)
-    
+            for result in soup.select(".Qlx7of .i0X6df"):
+                title = result.select_one(".tAxDx").get_text(strip=True) if result.select_one(".tAxDx") else None
+                product_link = "https://www.google.com" + result.select_one(".Lq5OHe")["href"] if result.select_one(".Lq5OHe") else None
+
+                product_rating_element = result.select_one(".NzUzee .Rsc7Yb")
+                product_rating = product_rating_element.get_text(strip=True) if product_rating_element else None
+
+                product_reviews_element = result.select_one(".NzUzee > div")
+                product_reviews = product_reviews_element.get_text(strip=True) if product_reviews_element else None
+
+                price_element = result.select_one(".a8Pemb")
+                price = price_element.get_text(strip=True) if price_element else None
+
+                store_element = result.select_one(".aULzUe")
+                store = store_element.get_text(strip=True) if store_element else None
+
+                store_link_element = result.select_one(".eaGTj div a")
+                store_link = "https://www.google.com" + store_link_element["href"] if store_link_element else None
+
+                delivery_element = result.select_one(".vEjMR")
+                delivery = delivery_element.get_text(strip=True) if delivery_element else None
+
+                compare_prices_link_element = result.select_one(".Ldx8hd .iXEZD")
+                compare_prices_link_value = compare_prices_link_element["href"] if compare_prices_link_element else None
+                compare_prices_link = "https://www.google.com" + compare_prices_link_value if compare_prices_link_value else None
+
+                google_shopping_data.append({
+                    "title": title,
+                    "product_link": product_link,
+                    "product_rating": product_rating,
+                    "product_reviews": product_reviews,
+                    "price": price,
+                    "store": store,
+                    "store_link": store_link,
+                    "delivery": delivery,
+                    "compare_prices_link": compare_prices_link,
+                })
+                
+            return google_shopping_data
+        
+        try:
+            next_page_button = browser.find_element(By.XPATH,'//span[contains(text(), "Уперед")]')
+        except NoSuchElementException:
+            # If no "next page" button is found, break out of the loop
+            break
+
+        
+        next_page_button.click()
 
 
+    info.extend(get_suggested_search_data())
     browser.quit()
-
+    #json.dumps(google_shopping_data, indent=2, ensure_ascii=False)
     #return get_suggested_search_data()
-    return get_suggested_search_data()
+    return info
 
 
 def run(df):
@@ -279,8 +289,13 @@ def run(df):
     cur=con.cursor()
 
     for index, row in df.iterrows():
-        
-        large_str=json.loads(request_scrap(row['name']))
+        file=request_scrap(row['name'])
+
+        try:
+            large_str=json.loads(file)
+        except:
+            continue
+
         for product in large_str:
 
             SearchInfoName=row['name']
@@ -382,7 +397,7 @@ def main():
 
 
     
-    num_processes = 10
+    num_processes = 1
     
     dataframe=pd.read_excel('./google_shop/file_temp.xlsx',dtype=str)
     # Convert your global 'links' list to a list that can be shared between processes

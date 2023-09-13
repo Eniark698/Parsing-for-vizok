@@ -11,3 +11,4 @@ log_GoogleShop_all
 temp/chromedriver.exe
 new_venv/
 geckodriver.log
+log_GoogleShop_all.log
