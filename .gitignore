@@ -5,5 +5,9 @@ secrets_file.cpython-311.pyc
 file_temp.xlsx
 temp_name_all.db
 temp_name.db
-win-venv-39/
+win-venv-311/
 venv-36/
+log_GoogleShop_all
+temp/chromedriver.exe
+new_venv/
+geckodriver.log

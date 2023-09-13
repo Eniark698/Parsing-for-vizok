@@ -25,7 +25,7 @@ def gather():
                   order by name asc, code asc;
                  """,sql_server_conn)
 
-  df.to_excel('./google_shop/file_temp.xls', index=False)
+  df.to_excel('./google_shop/file_temp.xlsx', index=False)
 
   del(df)
   print('created excel file')
