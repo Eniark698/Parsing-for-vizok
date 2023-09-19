@@ -6,13 +6,17 @@ import time
 import random
 import math
 from selenium import webdriver
-#from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import NoSuchElementException
 #from selenium_recaptcha_solver import RecaptchaSolver
+
+
+import undetected_chromedriver as uc
+
 
 from threading import Thread
 from bs4 import BeautifulSoup
@@ -94,33 +98,33 @@ def request_scrap(param_item):
     
     
 
-    # chrome_options = Options()
-    # chrome_options.add_argument("--user-data-dir=C:/Users/nmozol/AppData/Local/Google/Chrome/User Data/Default")
-    # chrome_options.add_argument(f"--proxy-server=http://localhost:16379")
-    # chrome_options.add_argument(f"user-agent={random.choice(user_agents)}")
-    # chrome_options.add_argument("--start-maximized")
-    # chrome_options.add_argument("--no-sandbox")
-    # chrome_options.add_argument("--disable-dev-shm-usage")
-    # chrome_options.add_argument("--remote-debugging-port=9222")
-    # chrome_options.add_argument('--disable-gpu')
-    # chrome_options.add_argument("--disable-extensions")
+    chrome_options = Options()
+    #chrome_options.add_argument("--user-data-dir=C:/Users/nmozol/AppData/Local/Google/Chrome/User Data/Default")
+    chrome_options.add_argument(f"--proxy-server=http://localhost:16379")
+    chrome_options.add_argument(f"user-agent={random.choice(user_agents)}")
+    chrome_options.add_argument("--start-maximized")
+    chrome_options.add_argument("--no-sandbox")
+    chrome_options.add_argument("--disable-dev-shm-usage")
+    chrome_options.add_argument("--remote-debugging-port=9222")
+    chrome_options.add_argument('--disable-gpu')
+    chrome_options.add_argument("--disable-extensions")
 
-    # chrome_options.binary_location='C:/Program Files (x86)/Google/Chrome/Application/chrome.exe'
+    #chrome_options.binary_location='C:/Program Files (x86)/Google/Chrome/Application/chrome.exe'
 
-    #browser = webdriver.Chrome(options=chrome_options)
+    browser = uc.Chrome(options=chrome_options)
 
 
-    profile = webdriver.FirefoxProfile()
-    profile.set_preference("general.useragent.override", random.choice(user_agents))
-    profile.set_preference("network.proxy.type", 1)
-    profile.set_preference("network.proxy.http", "localhost")
-    profile.set_preference("network.proxy.http_port", 16379)
-    options = webdriver.FirefoxOptions()
-    options.profile = profile
-    options.add_argument('--kiosk')
-    options.add_argument('--headless')
+                                # profile = webdriver.FirefoxProfile()
+                                # profile.set_preference("general.useragent.override", random.choice(user_agents))
+                                # profile.set_preference("network.proxy.type", 1)
+                                # profile.set_preference("network.proxy.http", "localhost")
+                                # profile.set_preference("network.proxy.http_port", 16379)
+                                # options = webdriver.FirefoxOptions()
+                                # options.profile = profile
+                                # options.add_argument('--kiosk')
+                                # options.add_argument('--headless')
 
-    browser = webdriver.Firefox(options=options)
+                                # browser = webdriver.Firefox(options=options)
 
 
     # # Set Firefox options
