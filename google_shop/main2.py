@@ -6,23 +6,25 @@ import time
 import random
 import math
 from selenium import webdriver
-#from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 #from selenium.webdriver.support.ui import WebDriverWait
 #from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import NoSuchElementException
 #from selenium_recaptcha_solver import RecaptchaSolver
-
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
 import undetected_chromedriver as uc
 
 
-from threading import Thread
+from threading import Thread,Lock
 from bs4 import BeautifulSoup
 #from captcha_bypass import solve_captcha
 
-
+tor_ports= list(range(9000, 9000+40))
+tor_ports_lock = Lock()
 
 
 def split_dataframe(df, num_splits):
@@ -69,6 +71,16 @@ def del_deliver(price):
 def request_scrap(param_item):
     
 
+    
+    tor_ports_lock.acquire()
+    port = random.choice(tor_ports)
+    tor_ports_lock.release()
+
+           
+    
+
+
+    
    
     # proxies_choose=random.choice(proxy_list)
     # https://docs.python-requests.org/en/master/user/quickstart/#custom-headers
@@ -98,33 +110,38 @@ def request_scrap(param_item):
     
     
 
-                            # chrome_options = Options()
-                            # #chrome_options.add_argument("--user-data-dir=C:/Users/nmozol/AppData/Local/Google/Chrome/User Data/Default")
-                            # chrome_options.add_argument(f"--proxy-server=http://localhost:16379")
-                            # chrome_options.add_argument(f"user-agent={random.choice(user_agents)}")
-                            # chrome_options.add_argument("--start-maximized")
-                            # chrome_options.add_argument("--no-sandbox")
-                            # chrome_options.add_argument("--disable-dev-shm-usage")
-                            # chrome_options.add_argument("--remote-debugging-port=9222")
-                            # chrome_options.add_argument('--disable-gpu')
-                            # chrome_options.add_argument("--disable-extensions")
+    chrome_options = Options()
+    #chrome_options.add_argument("--user-data-dir=C:/Users/nmozol/AppData/Local/Google/Chrome/User Data/Default")
+    chrome_options.add_argument(f"--proxy-server=http://localhost:{port}")
+    chrome_options.add_argument(f"user-agent={random.choice(user_agents)}")
+    chrome_options.add_argument("--start-maximized")
+    chrome_options.add_argument("--no-sandbox")
+    chrome_options.add_argument("--disable-dev-shm-usage")
+    #chrome_options.add_argument("--remote-debugging-port=9222")
+    chrome_options.add_argument('--disable-gpu')
+    chrome_options.add_argument("--disable-extensions")
 
-                            # #chrome_options.binary_location='C:/Program Files (x86)/Google/Chrome/Application/chrome.exe'
+    #chrome_options.binary_location='C:/Program Files (x86)/Google/Chrome/Application/chrome.exe'
 
-                            # browser = uc.Chrome(options=chrome_options)
+    browser = uc.Chrome(options=chrome_options)
 
 
-    profile = webdriver.FirefoxProfile()
-    profile.set_preference("general.useragent.override", random.choice(user_agents))
-    profile.set_preference("network.proxy.type", 1)
-    profile.set_preference("network.proxy.http", "172.15.0.22")
-    profile.set_preference("network.proxy.http_port", {random.choice(tor_ports)})
-    options = webdriver.FirefoxOptions()
-    options.profile = profile
-    options.add_argument('--kiosk')
-    #options.add_argument('--headless')
+    # profile = webdriver.FirefoxProfile()
+    # profile.set_preference("general.useragent.override", random.choice(user_agents))
+    # profile.set_preference("network.proxy.type", 1)
+    # profile.set_preference("network.proxy.socks", "127.0.0.1")
+    # profile.set_preference("network.proxy.socks_port", 9000)
+    # profile.set_preference("network.proxy.socks_version", 4)
+    # options = webdriver.FirefoxOptions()
+    # options.profile = profile
+    # options.add_argument('--kiosk')
+    # #options.add_argument('--headless')
 
-    browser = webdriver.Firefox(options=options)
+    # browser = webdriver.Firefox(options=options)
+    # wait = WebDriverWait(browser, 10)
+
+    
+    
 
 
     # # Set Firefox options
@@ -399,10 +416,10 @@ def main():
 
 
 
-    global tor_ports
-    tor_ports= list(range(16379, 16379+40))
     
-    num_processes = 4
+   
+
+    num_processes = 1
     
     dataframe=pd.read_excel('./google_shop/file_temp.xlsx',dtype=str)
     # Convert your global 'links' list to a list that can be shared between processes
