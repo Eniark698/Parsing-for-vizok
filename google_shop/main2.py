@@ -117,8 +117,8 @@ def request_scrap(param_item):
     profile = webdriver.FirefoxProfile()
     profile.set_preference("general.useragent.override", random.choice(user_agents))
     profile.set_preference("network.proxy.type", 1)
-    profile.set_preference("network.proxy.http", "localhost")
-    profile.set_preference("network.proxy.http_port", 16379)
+    profile.set_preference("network.proxy.http", "172.15.0.22")
+    profile.set_preference("network.proxy.http_port", {random.choice(tor_ports)})
     options = webdriver.FirefoxOptions()
     options.profile = profile
     options.add_argument('--kiosk')
@@ -399,9 +399,10 @@ def main():
 
 
 
-
+    global tor_ports
+    tor_ports= list(range(16379, 16379+40))
     
-    num_processes = 1
+    num_processes = 4
     
     dataframe=pd.read_excel('./google_shop/file_temp.xlsx',dtype=str)
     # Convert your global 'links' list to a list that can be shared between processes
