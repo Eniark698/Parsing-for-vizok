@@ -1,30 +1,15 @@
-import json, re
-#from parsel import Selector
+import json, re, requests
+from parsel import Selector
 import numpy as np
 import pandas as pd
 import time
 import random
 import math
-from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.common.by import By
-from selenium.webdriver.common.keys import Keys
-#from selenium.webdriver.support.ui import WebDriverWait
-#from selenium.webdriver.support import expected_conditions as EC
-from selenium.common.exceptions import NoSuchElementException
-#from selenium_recaptcha_solver import RecaptchaSolver
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-
-import undetected_chromedriver as uc
+import sys
 
 
-from threading import Thread,Lock
-from bs4 import BeautifulSoup
+from threading import Thread
 #from captcha_bypass import solve_captcha
-
-tor_ports= list(range(9000, 9000+40))
-tor_ports_lock = Lock()
 
 
 def split_dataframe(df, num_splits):
@@ -72,18 +57,11 @@ def request_scrap(param_item):
     
 
     
-    tor_ports_lock.acquire()
-    port = random.choice(tor_ports)
-    tor_ports_lock.release()
-
-           
-    
+  
 
 
     
-   
-    # proxies_choose=random.choice(proxy_list)
-    # https://docs.python-requests.org/en/master/user/quickstart/#custom-headers
+
 
     user_agents = [
         'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36'
@@ -93,215 +71,86 @@ def request_scrap(param_item):
         ,'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101 Firefox/91.0'
         ,'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:90.0) Gecko/20100101 Firefox/90.0'
     ]
+    params = {
+        "q": param_item,
+        "hl": "uk",     # language
+        "gl": "ua",     # country of the search, US -> USA
+        "tbm": "shop",   # google search shopping tab
+    }
+    proxies={'http': f'socks5://10.0.100.12:9050'}
 
-    # headers = {
-    #     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36"
-    # }
-    # https://docs.python-requests.org/en/master/user/quickstart/#passing-parameters-in-urls
-
-
-
-    # params = {
-    #     "q": param_item.replace(' ', '+'),
-    #     "hl": "uk",     # language
-    #     "gl": "ua",     # country of the search, UA -> Ukraine
-    #     "tbm": "shop"   # google search shopping tab
-    # }
-    
-    
-
-    chrome_options = Options()
-    #chrome_options.add_argument("--user-data-dir=C:/Users/nmozol/AppData/Local/Google/Chrome/User Data/Default")
-    chrome_options.add_argument(f"--proxy-server=http://localhost:{port}")
-    chrome_options.add_argument(f"user-agent={random.choice(user_agents)}")
-    chrome_options.add_argument("--start-maximized")
-    chrome_options.add_argument("--no-sandbox")
-    chrome_options.add_argument("--disable-dev-shm-usage")
-    #chrome_options.add_argument("--remote-debugging-port=9222")
-    chrome_options.add_argument('--disable-gpu')
-    chrome_options.add_argument("--disable-extensions")
-
-    #chrome_options.binary_location='C:/Program Files (x86)/Google/Chrome/Application/chrome.exe'
-
-    browser = uc.Chrome(options=chrome_options)
-
-
-    # profile = webdriver.FirefoxProfile()
-    # profile.set_preference("general.useragent.override", random.choice(user_agents))
-    # profile.set_preference("network.proxy.type", 1)
-    # profile.set_preference("network.proxy.socks", "127.0.0.1")
-    # profile.set_preference("network.proxy.socks_port", 9000)
-    # profile.set_preference("network.proxy.socks_version", 4)
-    # options = webdriver.FirefoxOptions()
-    # options.profile = profile
-    # options.add_argument('--kiosk')
-    # #options.add_argument('--headless')
-
-    # browser = webdriver.Firefox(options=options)
-    # wait = WebDriverWait(browser, 10)
-
-    
+    html = requests.get("https://www.google.com/search", params=params, headers={'user-agent':random.choice(user_agents)}, timeout=30, proxies=proxies)
+    selector = Selector(html.text)
     
 
 
-    # # Set Firefox options
-    # firefox_options = Options()
-    # firefox_options.add_argument("--start-maximized")
-    # # Specify the path to the Firefox profile
-    # firefox_profile = webdriver.FirefoxProfile(r'C:/Users/nmozol/AppData/Local/Mozilla/Firefox/Profiles/4lbtvq9g.default-release')
 
-    # # Add custom user agent
-    # firefox_profile.set_preference("general.useragent.override", random.choice(user_agents))
-
-    # # Set other preferences (example with proxy)
-    # firefox_profile.set_preference("network.proxy.type", 1)
-    # firefox_profile.set_preference("network.proxy.http", "localhost")
-    # firefox_profile.set_preference("network.proxy.http_port", 16379)
-
-    # # Add the profile to the options
-    # firefox_options.profile = firefox_profile
-
-    # # Create a new instance of the Firefox driver
-    # browser = webdriver.Firefox()
-
-    browser.set_page_load_timeout(30)
-    browser.implicitly_wait(5)
-
-    # with open('./temp/cookies.txt', 'r') as f:
-    #     cookies=json.load(f)
-    # # Convert your cookies object to a list of cookie dictionaries
-    # #cookies_list = [{'name': name, 'value': value} for name, value in cookies.items()]
-    # for el in cookies:
-    #     el['sameSite']='Lax'
-
-    # context.add_cookies(cookies)
-
-    #page.set_user_agent(random.choice(user_agents))
-    #url = "https://www.google.com/search?" + "&".join([f"{k}={v}" for k, v in params.items()])
-    url='https://www.google.com/?tbm=shop'
-    browser.get(url)
-
-    time.sleep(random.uniform(1,2))
-    #driver_login(browser)
-    time.sleep(random.uniform(1,2))
-    search_input=browser.find_element(By.NAME, 'q')
-    time.sleep(random.uniform(1,2))
-    search_input.send_keys(param_item)
-    time.sleep(random.uniform(1,2))
-    search_input.send_keys(Keys.RETURN)
-    time.sleep(random.uniform(2,4))
-    # solver = RecaptchaSolver(driver=browser)
-    # recaptcha_iframe = browser.find_element(By.XPATH, '//iframe[@title="reCAPTCHA"]')
    
-    # result = captcha_bypass.solve_captcha(browser, recaptcha_iframe)
-
-
-
-
-    # Wait until the "Shopping" link is present in the DOM
-    # wait = WebDriverWait(browser, 30)
-    # shopping_button = wait.until(EC.presence_of_element_located((By.XPATH, "//span[normalize-space(text())='Покупки']")))
-
-    # # Click the button
-    # shopping_button.click()
-
-    # time.sleep(random.uniform(1,3))
-
-    info=[]
-    while True:
-        # Get page source to use with BeautifulSoup
-        page_source = browser.page_source
-
-        # Parse the page source with BeautifulSoup
-        soup = BeautifulSoup(page_source, 'html.parser')
-
-        # Get all style elements
-        styles = soup.find_all('style')
-        
-        # Get CSS as a single string
-        css = '\n'.join([style.get_text() for style in styles])
 
 
 
 
 
-
-
-        def get_original_images(soup):
-            all_script_tags = "".join(
-            [str(script).replace("</script>", "</script>\n") for script in soup.select("script")]
+    def get_original_images():
+        all_script_tags = "".join(
+            [
+                script.replace("</script>", "</script>\n")
+                for script in selector.css("script").getall()
+            ]
         )
+    
+        image_urls = []
+        for result in selector.css(".Qlx7of .sh-dgr__grid-result"):
+            # https://regex101.com/r/udjFUq/1
+            url_with_unicode = re.findall(rf"var\s?_u='(.*?)';var\s?_i='{result.attrib['data-pck']}';", all_script_tags)
 
-            image_urls = []
-
-            for result in soup.select(".Qlx7of .sh-dgr__grid-result"):
-                data_pck = result.attrs.get('data-pck', '')
-                url_with_unicode = re.findall(rf"var\s?_u='(.*?)';var\s?_i='{data_pck}';", all_script_tags)
-
-                if url_with_unicode:
-                    url_decode = bytes(url_with_unicode[0], 'ascii').decode('unicode-escape')
-                    image_urls.append(url_decode)
-
-            return image_urls
-
-        def get_suggested_search_data():
-            google_shopping_data = []
-            
-            for result in soup.select(".Qlx7of .i0X6df"):
-                title = result.select_one(".tAxDx").get_text(strip=True) if result.select_one(".tAxDx") else None
-                product_link = "https://www.google.com" + result.select_one(".Lq5OHe")["href"] if result.select_one(".Lq5OHe") else None
-
-                product_rating_element = result.select_one(".NzUzee .Rsc7Yb")
-                product_rating = product_rating_element.get_text(strip=True) if product_rating_element else None
-
-                product_reviews_element = result.select_one(".NzUzee > div")
-                product_reviews = product_reviews_element.get_text(strip=True) if product_reviews_element else None
-
-                price_element = result.select_one(".a8Pemb")
-                price = price_element.get_text(strip=True) if price_element else None
-
-                store_element = result.select_one(".aULzUe")
-                store = store_element.get_text(strip=True) if store_element else None
-
-                store_link_element = result.select_one(".eaGTj div a")
-                store_link = "https://www.google.com" + store_link_element["href"] if store_link_element else None
-
-                delivery_element = result.select_one(".vEjMR")
-                delivery = delivery_element.get_text(strip=True) if delivery_element else None
-
-                compare_prices_link_element = result.select_one(".Ldx8hd .iXEZD")
-                compare_prices_link_value = compare_prices_link_element["href"] if compare_prices_link_element else None
-                compare_prices_link = "https://www.google.com" + compare_prices_link_value if compare_prices_link_value else None
-
-                google_shopping_data.append({
-                    "title": title,
-                    "product_link": product_link,
-                    "product_rating": product_rating,
-                    "product_reviews": product_reviews,
-                    "price": price,
-                    "store": store,
-                    "store_link": store_link,
-                    "delivery": delivery,
-                    "compare_prices_link": compare_prices_link,
-                })
+            if url_with_unicode:
+                url_decode = bytes(url_with_unicode[0], 'ascii').decode('unicode-escape')
+                image_urls.append(url_decode)
                 
-            return google_shopping_data
+        return image_urls
+
+    def get_suggested_search_data():
+        google_shopping_data = []
         
-        try:
-            next_page_button = browser.find_element(By.XPATH,'//span[contains(text(), "Уперед")]')
-        except NoSuchElementException:
-            # If no "next page" button is found, break out of the loop
-            break
+        
+
+        for result, thumbnail in zip(selector.css(".Qlx7of .i0X6df"), get_original_images()):
+            title = result.css(".tAxDx::text").get()        
+            product_link = "https://www.google.com" + result.css(".Lq5OHe::attr(href)").get()   
+            product_rating = result.css(".NzUzee .Rsc7Yb::text").get()      
+            product_reviews = result.css(".NzUzee > div::text").get()       
+            price = result.css(".a8Pemb::text").get()   
+            old_price=result.css(".zY3Xhe::text").get()
+            old_price1=result.css(".nSfGAb::text").get()    
+            store = result.css(".aULzUe::text").get()     
+            try:  
+                store_link = "https://www.google.com" + result.css(".eaGTj div a::attr(href)").get()   
+            except:
+                store_link= None
+            delivery = result.css(".vEjMR::text").get()
 
         
-        next_page_button.click()
+            compare_prices_link_value = result.css(".Ldx8hd .iXEZD::attr(href)").get()      
+            compare_prices_link = "https://www.google.com" + compare_prices_link_value if compare_prices_link_value else compare_prices_link_value
 
+            google_shopping_data.append({
+                "title": title,
+                "product_link": product_link,
+                "product_rating": product_rating,
+                "product_reviews": product_reviews,
+                "price": price,
+                "old_price" : old_price,
+                "old_price1" : old_price1,
+                "store": store,
+                "store_link": store_link,
+                "delivery": delivery,
+                "compare_prices_link": compare_prices_link,
+            })
+        return json.dumps(google_shopping_data, indent=2, ensure_ascii=False)
+    return get_suggested_search_data()
+ 
 
-    info.extend(get_suggested_search_data())
-    browser.quit()
-    #json.dumps(google_shopping_data, indent=2, ensure_ascii=False)
-    #return get_suggested_search_data()
-    return info
 
 
 def run(df):
@@ -312,6 +161,10 @@ def run(df):
     for index, row in df.iterrows():
         file=request_scrap(row['name'])
 
+        if file==[]:
+            sys.exit('file was empty')
+
+            
         try:
             large_str=json.loads(file)
         except:
@@ -348,6 +201,16 @@ def run(df):
                 Price=del_uah(product['price'])
             except:
                 Price=None
+                
+            try:
+                OldPrice=del_uah(product['old_price'])
+            except:
+                try:
+                    temp=re.findall(r'[\d,.]+',product['old_price1'])
+                    OldPrice=float(temp[0].replace(',', '.'))
+                except:
+
+                    OldPrice=None
 
             try:
                 DeliveryPrice=del_deliver(product['delivery'])
@@ -370,12 +233,9 @@ def run(df):
             except:
                 ComparePricesLink=None
 
-            data=(SearchInfoName,SearchInfoCode,Name, Seller,ItemOnStoreUrl,ItemOnGoogleShopUrl, Price,DeliveryPrice, DeliveryInfo, ProductRating,ComparePricesLink )
-            #print(product['product_rating'])
-            #print(product['product_reviews'])
-            #print(product['store_rating'])
-            #print(product['store_reviews'])
-            cur.execute(""" insert into temp_table values (?,?,?,?,?,?,?,?,?,?,?)""", data)
+            data=(SearchInfoName,SearchInfoCode,Name, Seller,ItemOnStoreUrl,ItemOnGoogleShopUrl, Price, OldPrice, DeliveryPrice, DeliveryInfo, ProductRating,ComparePricesLink )
+        
+            cur.execute(""" insert into temp_table values (?,?,?,?,?,?,?,?,?,?,?,?)""", data)
             
             con.commit()
 
@@ -396,6 +256,7 @@ def main():
                         item_on_store_url varchar(3000),
                         item_on_google_shop_url varchar(3000),
                         price float,
+                        old_price float,
                         delivery_price float,
                         delivery_info nvarchar(500),
                         product_rating float,

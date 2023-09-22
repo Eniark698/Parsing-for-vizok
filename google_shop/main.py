@@ -10,8 +10,8 @@ from traceback import format_exc
 import logging
 from logging.handlers import TimedRotatingFileHandler
 log_formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
-#log_file = '/logs/GoogleShop/GoogleShop_all.log'
-log_file = './google_shop/log_GoogleShop_all.log'
+log_file = '/logs/GoogleShop/GoogleShop_all.log'
+#log_file = './google_shop/log_GoogleShop_all.log'
 handler = TimedRotatingFileHandler(log_file, when="midnight", interval=1, backupCount=30)
 handler.setFormatter(log_formatter)
 logger = logging.getLogger()

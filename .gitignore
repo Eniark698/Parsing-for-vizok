@@ -14,3 +14,4 @@ geckodriver.log
 log_GoogleShop_all.log
 venv/
 log_GoogleShop_all.log.*
+temp/
