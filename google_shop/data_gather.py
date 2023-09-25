@@ -1,7 +1,6 @@
 def gather():
   import pyodbc
   import base64
-  import numpy as np
   import pandas as pd
 
   from secrets_file import server,database,port,user,password

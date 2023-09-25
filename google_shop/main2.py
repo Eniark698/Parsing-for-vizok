@@ -1,15 +1,18 @@
-import json, re, requests
-from parsel import Selector
-import numpy as np
+import json, re
 import pandas as pd
 import time
 import random
 import math
 import sys
-
-
+from playwright.sync_api import sync_playwright
+from playwright_stealth import stealth_sync
 from threading import Thread
-#from captcha_bypass import solve_captcha
+
+
+
+def extract_text(element, selector):
+    sub_element = element.query_selector(selector)
+    return sub_element.inner_text() if sub_element else None
 
 
 def split_dataframe(df, num_splits):
@@ -57,98 +60,119 @@ def request_scrap(param_item):
     
 
     
-    time.sleep(60)
-
-
-    
-
-
-    user_agents = [
-        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36'
-        ,'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.131 Safari/537.36'
-        ,'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
-        ,'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.93 Safari/537.36'
-        ,'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101 Firefox/91.0'
-        ,'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:90.0) Gecko/20100101 Firefox/90.0'
-    ]
-    params = {
-        "q": param_item,
-        "hl": "uk",     # language
-        "gl": "ua",     # country of the search, US -> USA
-        "tbm": "shop",   # google search shopping tab
-    }
-    proxies={'http': f'socks5://10.0.100.12:9050'}
-
-    html = requests.get("https://www.google.com/search", params=params, headers={'user-agent':random.choice(user_agents)}, timeout=30, proxies=proxies)
-    selector = Selector(html.text)
-    
-
-
-
-   
-
-
-
-
-
-    def get_original_images():
-        all_script_tags = "".join(
-            [
-                script.replace("</script>", "</script>\n")
-                for script in selector.css("script").getall()
-            ]
-        )
-    
-        image_urls = []
-        for result in selector.css(".Qlx7of .sh-dgr__grid-result"):
-            # https://regex101.com/r/udjFUq/1
-            url_with_unicode = re.findall(rf"var\s?_u='(.*?)';var\s?_i='{result.attrib['data-pck']}';", all_script_tags)
-
-            if url_with_unicode:
-                url_decode = bytes(url_with_unicode[0], 'ascii').decode('unicode-escape')
-                image_urls.append(url_decode)
-                
-        return image_urls
-
-    def get_suggested_search_data():
-        google_shopping_data = []
-        
+    with sync_playwright() as p:
+            
         
 
-        for result, thumbnail in zip(selector.css(".Qlx7of .i0X6df"), get_original_images()):
-            title = result.css(".tAxDx::text").get()        
-            product_link = "https://www.google.com" + result.css(".Lq5OHe::attr(href)").get()   
-            product_rating = result.css(".NzUzee .Rsc7Yb::text").get()      
-            product_reviews = result.css(".NzUzee > div::text").get()       
-            price = result.css(".a8Pemb::text").get()   
-            old_price=result.css(".zY3Xhe::text").get()
-            old_price1=result.css(".nSfGAb::text").get()    
-            store = result.css(".aULzUe::text").get()     
-            try:  
-                store_link = "https://www.google.com" + result.css(".eaGTj div a::attr(href)").get()   
+
+        user_agents = [
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36'
+            ,'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.131 Safari/537.36'
+            ,'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+            ,'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.93 Safari/537.36'
+            ,'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101 Firefox/91.0'
+            ,'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:90.0) Gecko/20100101 Firefox/90.0'
+        ]
+        
+
+
+
+
+
+
+        # params = {
+        #     "q": param_item,
+        #     "hl": "uk",     # language
+        #     "gl": "ua",     # country of the search, US -> USA
+        #     "tbm": "shop",   # google search shopping tab
+        # }
+       
+
+        #proxy={"server": f'socks5://10.0.100.12:9050'}
+        browser=p.firefox.launch_persistent_context('./temp/', headless = True, base_url='https://www.google.com', viewport={ 'width': 1280, 'height': 920 }, user_agent=random.choice(user_agents), slow_mo=300,permissions=['geolocation'],geolocation={'latitude':49.842957,"longitude":24.031111}, locale='uk-UA',timezone_id='Europe/Kyiv')
+        page=browser.pages[0]
+        stealth_sync(page)
+        page.goto('https://www.google.com', wait_until='domcontentloaded')
+        time.sleep(random.uniform(1.5, 5.9))
+        page.click('textarea[name="q"]')
+        time.sleep(random.uniform(1.5, 3.9))
+        page.type('textarea[name="q"]', param_item) 
+        page.keyboard.press("Enter")
+        time.sleep(random.uniform(1.5, 2.9))
+        
+         # Click the "Shopping" tab
+        page.click('text=Покупки')
+        time.sleep(random.uniform(1.5, 4.9))
+
+
+
+        def get_suggested_search_data():
+            google_shopping_data = []
+            
+            
+
+            for result in page.query_selector_all(".Qlx7of .i0X6df"):
+                title = extract_text(result, ".tAxDx")
+
+                product_link = "https://www.google.com" + result.query_selector(".Lq5OHe").get_attribute("href")
+                product_rating = extract_text(result,".NzUzee .Rsc7Yb")
+                product_reviews = extract_text(result,".NzUzee > div")
+                price = extract_text(result,".a8Pemb")
+                old_price = extract_text(result,".zY3Xhe")
+                old_price1 = extract_text(result,".nSfGAb")
+                store = extract_text(result,".aULzUe")
+                try:
+                    store_link_element = result.query_selector(".eaGTj div a")
+                except:
+                    store_link_element=None
+                store_link = "https://www.google.com" + store_link_element.get_attribute("href") if store_link_element else None
+                delivery = extract_text(result,".vEjMR")
+                try:
+                    compare_prices_link_value = result.query_selector(".Ldx8hd .iXEZD").get_attribute("href")
+                except:
+                    compare_prices_link_value=None
+
+                compare_prices_link = "https://www.google.com" + compare_prices_link_value if compare_prices_link_value else compare_prices_link_value
+
+
+                google_shopping_data.append({
+                    "title": title,
+                    "product_link": product_link,
+                    "product_rating": product_rating,
+                    "product_reviews": product_reviews,
+                    "price": price,
+                    "old_price": old_price,
+                    "old_price1": old_price1,
+                    "store": store,
+                    "store_link": store_link,
+                    "delivery": delivery,
+                    "compare_prices_link": compare_prices_link,
+                })
+            return json.dumps(google_shopping_data, indent=2, ensure_ascii=False)
+
+
+        
+      
+        data=[]
+        while True:
+            page.wait_for_load_state('load')
+            temp=json.loads(get_suggested_search_data())
+
+            data.extend(temp)
+            
+
+            try:
+                page.keyboard.press("End")
+                page.click('a#pnnext', timeout=10000)
             except:
-                store_link= None
-            delivery = result.css(".vEjMR::text").get()
+                break
+
+            
+        browser.close()
+
 
         
-            compare_prices_link_value = result.css(".Ldx8hd .iXEZD::attr(href)").get()      
-            compare_prices_link = "https://www.google.com" + compare_prices_link_value if compare_prices_link_value else compare_prices_link_value
-
-            google_shopping_data.append({
-                "title": title,
-                "product_link": product_link,
-                "product_rating": product_rating,
-                "product_reviews": product_reviews,
-                "price": price,
-                "old_price" : old_price,
-                "old_price1" : old_price1,
-                "store": store,
-                "store_link": store_link,
-                "delivery": delivery,
-                "compare_prices_link": compare_prices_link,
-            })
-        return json.dumps(google_shopping_data, indent=2, ensure_ascii=False)
-    return get_suggested_search_data()
+        return data
  
 
 
@@ -159,16 +183,9 @@ def run(df):
     cur=con.cursor()
 
     for index, row in df.iterrows():
-        file=request_scrap(row['name'])
-
-        if file=='[]':
-            sys.exit('file was empty')
-
-
-        try:
-            large_str=json.loads(file)
-        except:
-            continue
+        
+        large_str=request_scrap(row['name'])
+       
 
         for product in large_str:
 
@@ -280,7 +297,7 @@ def main():
     
    
 
-    num_processes = 4
+    num_processes = 6
     
     dataframe=pd.read_excel('./google_shop/file_temp.xlsx',dtype=str)
     # Convert your global 'links' list to a list that can be shared between processes
