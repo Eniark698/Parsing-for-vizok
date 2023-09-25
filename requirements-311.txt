@@ -1,3 +1,4 @@
+appdirs==1.4.4
 attrs==23.1.0
 beautifulsoup4==4.12.2
 bs4==0.0.1
@@ -5,6 +6,7 @@ cachetools==5.3.1
 certifi==2023.7.22
 cffi==1.15.1
 charset-normalizer==3.2.0
+colorama==0.4.6
 cryptography==41.0.4
 cssselect==1.2.0
 et-xmlfile==1.1.0
@@ -17,6 +19,7 @@ googleapis-common-protos==1.60.0
 h11==0.14.0
 httplib2==0.22.0
 idna==3.4
+importlib-metadata==6.8.0
 jmespath==1.0.1
 lxml==4.9.3
 numpy==1.25.2
@@ -31,9 +34,11 @@ pyasn1==0.5.0
 pyasn1-modules==0.3.0
 pycparser==2.21
 pydub==0.25.1
+pyee==8.2.2
 pyodbc==4.0.39
 pyOpenSSL==23.2.0
 pyparsing==3.1.1
+pyppeteer==1.0.2
 PySocks==1.7.1
 python-dateutil==2.8.2
 pytz==2023.3.post1
@@ -46,6 +51,7 @@ socks==0
 sortedcontainers==2.4.0
 soupsieve==2.5
 SpeechRecognition==3.10.0
+tqdm==4.66.1
 trio==0.22.2
 trio-websocket==0.10.4
 tzdata==2023.3
@@ -55,6 +61,7 @@ urllib3==1.26.16
 w3lib==2.1.2
 waitress==2.1.2
 WebOb==1.8.7
-websockets==11.0.3
+websockets==10.4
 WebTest==3.0.0
 wsproto==1.2.0
+zipp==3.17.0

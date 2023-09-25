@@ -20,11 +20,14 @@ def gather():
 
   # Fetch data from SQLite table
   df=pd.read_sql("""
-                  SELECT  distinct trim(replace(replace([Name],'	',''),'  ','')) as name, Barcode as code
+                  SELECT  distinct trim(Name) as name, Barcode as code
                   FROM [bi_fop_storozhuk].[dbo].[ProductAdministrative]
                   order by name asc, code asc;
                  """,sql_server_conn)
 
+
+
+  df=df.sample(frac=1, random_state=None)
   df.to_excel('./google_shop/file_temp.xlsx', index=False)
 
   del(df)
@@ -32,4 +35,10 @@ def gather():
   # Close connections
   sql_server_cursor.close()
   sql_server_conn.close()
+
+
+
+
+
+
 

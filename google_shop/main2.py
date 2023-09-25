@@ -57,7 +57,7 @@ def request_scrap(param_item):
     
 
     
-  
+    time.sleep(60)
 
 
     
@@ -161,10 +161,10 @@ def run(df):
     for index, row in df.iterrows():
         file=request_scrap(row['name'])
 
-        if file==[]:
+        if file=='[]':
             sys.exit('file was empty')
 
-            
+
         try:
             large_str=json.loads(file)
         except:
@@ -172,9 +172,9 @@ def run(df):
 
         for product in large_str:
 
-            SearchInfoName=row['name']
+            SearchInfoName=row['name'].strip()
 
-            SearchInfoCode=str(row['code'])
+            SearchInfoCode=str(row['code']).strip()
 
             try:
                 Name=product['title'].strip()
@@ -280,7 +280,7 @@ def main():
     
    
 
-    num_processes = 1
+    num_processes = 4
     
     dataframe=pd.read_excel('./google_shop/file_temp.xlsx',dtype=str)
     # Convert your global 'links' list to a list that can be shared between processes
