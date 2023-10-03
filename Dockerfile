@@ -6,7 +6,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 # Update the repository and install necessary packages
 RUN apt-get update && apt-get install -y \
-   ubuntu-desktop \
+#   ubuntu-desktop \
    lsb-release \ 
    firefox \
    wget \
@@ -20,6 +20,7 @@ RUN apt-get update && apt-get install -y \
    websockify \
    x11vnc \
    xvfb \
+   xlde \
    build-essential \
    python3.11 \
    pip \
@@ -72,6 +73,9 @@ RUN mkdir -p ~/.vnc && x11vnc -storepasswd 8vacUxZziO ~/.vnc/passwd
 # Set up the startup script
 COPY start.sh .
 RUN sudo chmod +x start.sh
+RUN sudo mkdir -p /tmp/.X11-unix
+RUN sudo chmod 1777 /tmp/.X11-unix
+RUN sudo chown root /tmp/.X11-unix
 
 
 # Expose the noVNC port
