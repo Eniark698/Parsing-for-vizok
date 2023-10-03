@@ -22,8 +22,10 @@ RUN apt-get update && apt-get install -y \
    xvfb \
    build-essential \
    python3.11 \
-   pip
-
+   pip \
+   dbus-x11 \
+   gnome-session \
+   gnome-terminal
 
 
 RUN curl https://packages.microsoft.com/keys/microsoft.asc | tee /etc/apt/trusted.gpg.d/microsoft.asc
@@ -58,6 +60,8 @@ RUN pip3 install playwright
 
 # Install python deps from playwright
 RUN python3 -m playwright install
+
+COPY lightdm.conf /etc/lightdm/lightdm.conf
 
 # Clone noVNC into the home directory
 RUN git clone https://github.com/novnc/noVNC.git
