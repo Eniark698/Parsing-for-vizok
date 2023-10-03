@@ -20,7 +20,7 @@ RUN apt-get update && apt-get install -y \
    websockify \
    x11vnc \
    xvfb \
-   xlde \
+   lxde \
    build-essential \
    python3.11 \
    pip \
