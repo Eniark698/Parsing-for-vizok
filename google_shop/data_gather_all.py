@@ -2,6 +2,13 @@ def gather():
   import pyodbc
   import base64
   import pandas as pd
+  from datetime import datetime
+  import pytz
+  from os import path,getcwd
+  current_working_directory = getcwd()
+
+
+
 
   from secrets_file import server,database,port,user,password
   server=base64.b64decode(server.decode("utf-8")).decode()
@@ -27,17 +34,19 @@ def gather():
 
 
   df=df.sample(frac=1, random_state=None)
-  df.to_excel('./google_shop/file_temp.xlsx', index=False)
+  df.to_excel('./google_shop/file_temp_all.xlsx', index=False)
 
-  del(df)
-  print('created excel file')
+
+  print('created excel file(all)')
   # Close connections
   sql_server_cursor.close()
   sql_server_conn.close()
 
+  dt_with_timezone = datetime.fromtimestamp(
+                path.getmtime(current_working_directory +'\\google_shop\\file_temp_all.xlsx'), pytz.timezone("Europe/Kyiv")           
+                              )
 
-
-
+  return {'rows': len(df), 'modifiedTime': str(dt_with_timezone)}
 
 
 

@@ -7,6 +7,8 @@ import sys
 from playwright.sync_api import sync_playwright
 from playwright_stealth import stealth_sync
 from threading import Thread
+from multiprocessing import Process
+from datetime import date
 
 
 
@@ -89,7 +91,7 @@ def request_scrap(param_item):
        
 
         #proxy={"server": f'socks5://10.0.100.12:9050'}
-        browser=p.firefox.launch_persistent_context('./temp/', headless = True, base_url='https://www.google.com', viewport={ 'width': 1280, 'height': 920 }, user_agent=random.choice(user_agents), slow_mo=300,permissions=['geolocation'],geolocation={'latitude':49.842957,"longitude":24.031111}, locale='uk-UA',timezone_id='Europe/Kyiv')
+        browser=p.firefox.launch_persistent_context('./temp/', headless = True, base_url='https://www.google.com', viewport={ 'width': 1280, 'height': 920 }, user_agent=random.choice(user_agents),permissions=['geolocation'],geolocation={'latitude':49.842957,"longitude":24.031111}, locale='uk-UA',timezone_id='Europe/Kyiv')
         page=browser.pages[0]
         stealth_sync(page)
         page.goto('https://www.google.com', wait_until='domcontentloaded')
@@ -181,6 +183,7 @@ def run(df):
     import sqlite3
     con=sqlite3.connect('./google_shop/temp_name_all.db') 
     cur=con.cursor()
+    today = date.today()
 
     for index, row in df.iterrows():
         
@@ -191,6 +194,7 @@ def run(df):
 
             SearchInfoName=row['name'].strip()
 
+            SearchInfoCode=None
             SearchInfoCode=str(row['code']).strip()
 
             try:
@@ -250,15 +254,15 @@ def run(df):
             except:
                 ComparePricesLink=None
 
-            data=(SearchInfoName,SearchInfoCode,Name, Seller,ItemOnStoreUrl,ItemOnGoogleShopUrl, Price, OldPrice, DeliveryPrice, DeliveryInfo, ProductRating,ComparePricesLink )
+            data=(today,SearchInfoName,SearchInfoCode,Name, Seller,ItemOnStoreUrl,ItemOnGoogleShopUrl, Price, OldPrice, DeliveryPrice, DeliveryInfo, ProductRating,ComparePricesLink )
         
-            cur.execute(""" insert into temp_table values (?,?,?,?,?,?,?,?,?,?,?,?)""", data)
+            cur.execute(""" insert into temp_table values (?,?,?,?,?,?,?,?,?,?,?,?,?)""", data)
             
             con.commit()
 
 
 
-def main():
+def main(num_processes = 1):
     
     import sqlite3
     con=sqlite3.connect('./google_shop/temp_name_all.db')
@@ -266,6 +270,7 @@ def main():
     cur=con.cursor()
     
     cur.execute('''create table if not exists temp_table(
+                        scrap_date date,
                         search_info_name nvarchar(500),
                         search_info_code varchar(250),
                         title nvarchar(500),
@@ -297,9 +302,9 @@ def main():
     
    
 
-    num_processes = 6
+    num_processes = 3
     
-    dataframe=pd.read_excel('./google_shop/file_temp.xlsx',dtype=str)
+    dataframe=pd.read_excel('./google_shop/file_temp_all.xlsx',dtype=str)
     # Convert your global 'links' list to a list that can be shared between processes
     #dataframe['code'] = dataframe['code'].astype(str)
     # Split the URLs into 10 separate chunks
@@ -308,7 +313,7 @@ def main():
     # Create 10 separate processes
     threads = []
     for i in range(num_processes):
-        t = Thread(target=run, args=(split_df[i],))
+        t = Process(target=run, args=(split_df[i],))
         threads.append(t)
 
     
@@ -321,4 +326,4 @@ def main():
         t.join()
 
     
-    print("All processes are complete in main2.")
+    print("All processes are complete in parse_all.")

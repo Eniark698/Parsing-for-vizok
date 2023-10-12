@@ -25,14 +25,14 @@ def overload():
     sqlite_cursor.execute("SELECT * FROM temp_table")
     rows = sqlite_cursor.fetchall()
 
-    #sql_server_cursor.execute('delete from Google_Shop_All;')
+    #sql_server_cursor.execute('delete from Google_Shop;')
 
   
     # Assuming all data is correctly fetched and there's data to insert:
     if rows:
         # Insert data into SQL Server table
         placeholders = ', '.join(['?'] * len(rows[0])) # Prepare placeholders based on number of columns
-        query = f"INSERT INTO Google_Shop VALUES ({placeholders})"
+        query = f"INSERT INTO Google_Shop_All VALUES ({placeholders})"
         
         # Execute the insert query for all rows at once
         sql_server_cursor.executemany(query, rows)
@@ -41,7 +41,7 @@ def overload():
 
 
 
-    print('inserted(overload_limit)')
+    print('inserted(overload_all)')
 
     # # Insert data into SQL Server table
     # for row in rows:

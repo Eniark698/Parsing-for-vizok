@@ -15,3 +15,5 @@ log_GoogleShop_all.log
 venv/
 log_GoogleShop_all.log.*
 temp/
+file_temp_all.xlsx
+cred.json
