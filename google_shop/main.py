@@ -1,4 +1,4 @@
-from nordvpn_switcher import initialize_VPN,rotate_VPN,terminate_VPN
+#from nordvpn_switcher import initialize_VPN,rotate_VPN,terminate_VPN
 
 from data_gather_all import gather as gather_all
 from data_gather_limit import gather
@@ -26,25 +26,6 @@ import warnings
 warnings.filterwarnings("ignore") 
 
 
-from urllib.request import urlopen
-import re as r
- 
-def getIP():
-    d = str(urlopen('http://checkip.dyndns.com/').read())
- 
-    return r.compile(r'Address: (\d+\.\d+\.\d+\.\d+)').search(d).group(1)
- 
-
-
-
-initialize_VPN(save=1,area_input=['ukraine'])
-print(getIP())
-rotate_VPN(google_check=1)
-
-print(getIP())
-
-terminate_VPN()
-quit()
 def main() -> None:
     try:
         
@@ -55,15 +36,13 @@ def main() -> None:
 
         
         start=time.time()
-        dict1=gather()
-        main1()
-        overload() 
-        print('part_1_done')
-        part_1_done=True
+        # dict1=gather()
+        # main1()
+        # overload() 
+        # print('part_1_done')
+        # part_1_done=True
 
-        rotate_VPN()
-        terminate_VPN()
-        quit()
+        
 
         dict2=gather_all()
         main2()
@@ -71,16 +50,16 @@ def main() -> None:
         print('part_2_done')
         part_2_done=True
 
-        terminate_VPN()
+        
 
     except:
         logger.critical('{}'.format(format_exc()))
         logger.critical('\n not completed\n')
         logger.critical('\n exec time: ' + str(time.time()-start))
-        terminate_VPN()
+        
 
     else:
-        logger.critical('limit part\n', dict1)
+        #logger.critical('limit part\n', dict1)
         logger.critical('all part\n', dict2)
         logger.critical('successfull completed\n')
         logger.critical('\n exec time: ' + str(time.time()-start))

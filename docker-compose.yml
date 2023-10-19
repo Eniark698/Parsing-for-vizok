@@ -1,0 +1,29 @@
+version: "3"
+services:
+  vpn:
+    image: ghcr.io/bubuntux/nordvpn
+    network_mode: bridge
+    container_name: vpn
+    ports:
+      - 3000:3000
+    cap_add:
+      - NET_ADMIN # Required
+      - NET_RAW # Required
+    environment: # Review https://github.com/bubuntux/nordvpn#environment-variables
+      - TOKEN=e9f2abbb18eb18d841c32bcc7c264c79de8961ee9cf977d548df84c322cb584f # Required
+      - TECHNOLOGY=NordLynx
+      - DNS=8.8.4.4
+      - CYBER_SEC=Disable
+      - FIREWALL=Disable
+      - OBFUSCATE=Enable
+    sysctls:
+      - net.ipv6.conf.all.disable_ipv6=1 # Recomended if using ipv4 only
+  app:
+    build:
+      context: ./
+      dockerfile: ./Dockerfile
+    user: "root"
+    privileged: true
+    network_mode: container:vpn
+    depends_on:
+      - vpn

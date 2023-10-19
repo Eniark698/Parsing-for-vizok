@@ -1,0 +1,23 @@
+version: "3"
+services:
+  firefox:
+    image: lscr.io/linuxserver/firefox:latest
+    container_name: firefox
+    restart: unless-stopped
+    network_mode: container:vpn
+    volumes:
+      - ./ffconfig:/config
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/New_York
+    security_opt:
+      - seccomp:unconfined
+    shm_size: "1gb"
+  app:
+      build:
+        context: ./
+        dockerfile: ./Dockerfile
+      restart: always
+      user: "root"
+      privileged: true
