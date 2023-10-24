@@ -20,7 +20,7 @@ def gather():
 
 
   # Connect to the SQL Server database
-  driver='ODBC driver 18 for SQL Server'
+  driver='ODBC driver 17 for SQL Server'
   sql_server_conn = pyodbc.connect(f'DRIVER={driver};SERVER={server};DATABASE={database};UID={user};PWD={password}')
   sql_server_cursor = sql_server_conn.cursor()
 
@@ -43,7 +43,7 @@ def gather():
   sql_server_conn.close()
 
   dt_with_timezone = datetime.fromtimestamp(
-                path.getmtime(current_working_directory +'\\google_shop\\file_temp_all.xlsx'), pytz.timezone("Europe/Kyiv")           
+                path.getmtime(current_working_directory +'/google_shop/file_temp_all.xlsx'), pytz.timezone("Europe/Kyiv")           
                               )
 
   return {'rows': len(df), 'modifiedTime': str(dt_with_timezone)}

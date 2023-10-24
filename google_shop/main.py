@@ -3,7 +3,7 @@
 from data_gather_all import gather as gather_all
 from data_gather_limit import gather
 from parse_file_limit import main as main1
-from data_overload import overload
+from data_overload_limit import overload
 from parse_file_all import main as main2
 from data_overload_all import overload as overload_all
 
@@ -20,8 +20,9 @@ log_file = './google_shop/log_GoogleShop_all.log'
 handler = TimedRotatingFileHandler(log_file, when="midnight", interval=1, backupCount=30)
 handler.setFormatter(log_formatter)
 logger = logging.getLogger()
+logger.propagate = False
 logger.addHandler(handler)
-logger.setLevel(logging.CRITICAL)
+logger.setLevel(logging.DEBUG)
 import warnings
 warnings.filterwarnings("ignore") 
 
@@ -44,25 +45,34 @@ def main() -> None:
 
         
 
-        dict2=gather_all()
-        main2()
-        overload_all()  
-        print('part_2_done')
-        part_2_done=True
+        # dict2=gather_all()
+        # main2()
+        # overload_all()  
+        # print('part_2_done')
+        # part_2_done=True
 
         
 
     except:
-        logger.critical('{}'.format(format_exc()))
-        logger.critical('\n not completed\n')
-        logger.critical('\n exec time: ' + str(time.time()-start))
-        
+        logger.debug('{}'.format(format_exc()))
+        logger.debug('NOT COMPLETED')
+        try:
+            dict1
+            logger.debug('limit part is done')
+        except:
+            logger.debug('not done limit part')
+        try:
+            dict2
+            logger.debug('all part is done')
+        except:
+            logger.debug('not done all part')
+        logger.debug('exec time: ' + str(time.time()-start))
 
     else:
-        #logger.critical('limit part\n', dict1)
-        logger.critical('all part\n', dict2)
-        logger.critical('successfull completed\n')
-        logger.critical('\n exec time: ' + str(time.time()-start))
+        logger.debug('limit part\n', dict1)
+        logger.debug('all part\n', dict2)
+        logger.debug('successfull completed')
+        logger.debug('exec time: ' + str(time.time()-start))
 
 
 if __name__=='__main__':

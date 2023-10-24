@@ -16,7 +16,7 @@ def overload():
 
     
     # Connect to the SQL Server database
-    driver='ODBC driver 18 for SQL Server'
+    driver='ODBC driver 17 for SQL Server'
     sql_server_conn = pyodbc.connect(f'DRIVER={driver};SERVER={server};DATABASE={database};UID={user};PWD={password}')
     sql_server_cursor = sql_server_conn.cursor()
 

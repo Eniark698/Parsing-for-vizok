@@ -1,29 +1,46 @@
 version: "3"
 services:
-  vpn:
-    image: ghcr.io/bubuntux/nordvpn
-    network_mode: bridge
-    container_name: vpn
-    ports:
-      - 3000:3000
+  gluetun:
+    image: qmcgaw/gluetun
+    # container_name: gluetun
+    # line above must be uncommented to allow external containers to connect.
+    # See https://github.com/qdm12/gluetun-wiki/blob/main/setup/connect-a-container-to-gluetun.md#external-container-to-gluetun
     cap_add:
-      - NET_ADMIN # Required
-      - NET_RAW # Required
-    environment: # Review https://github.com/bubuntux/nordvpn#environment-variables
-      - TOKEN=e9f2abbb18eb18d841c32bcc7c264c79de8961ee9cf977d548df84c322cb584f # Required
-      - TECHNOLOGY=NordLynx
-      - DNS=8.8.4.4
-      - CYBER_SEC=Disable
-      - FIREWALL=Disable
-      - OBFUSCATE=Enable
-    sysctls:
-      - net.ipv6.conf.all.disable_ipv6=1 # Recomended if using ipv4 only
+      - NET_ADMIN
+    devices:
+      - /dev/net/tun:/dev/net/tun
+    ports:
+      - 8888:8888/tcp # HTTP proxy
+      - 8388:8388/tcp # Shadowsocks
+      - 8388:8388/udp # Shadowsocks
+    # volumes:
+    #   - /yourpath:/gluetun
+    environment:
+      # See https://github.com/qdm12/gluetun-wiki/tree/main/setup#setup
+      - VPN_SERVICE_PROVIDER=nordvpn
+      - VPN_TYPE=openvpn
+      # OpenVPN:
+      - OPENVPN_USER="$OPENVPN_USER"
+      - OPENVPN_PASSWORD="$OPENVPN_PASSWORD"
+      # Wireguard:
+      # - WIREGUARD_PRIVATE_KEY=wOEI9rqqbDwnN8/Bpp22sVz48T71vJ4fYmFWujulwUU=
+      # - WIREGUARD_ADDRESSES=10.64.222.21/32
+      # Timezone for accurate log times
+      - TZ=Europe/Kyiv
+      # Server list updater
+      # See https://github.com/qdm12/gluetun-wiki/blob/main/setup/servers.md#update-the-vpn-servers-list
+      - UPDATER_PERIOD=0
+      - UPDATER_MIN_RATIO=0.0001
+      - SERVER_COUNTRIES=Ukraine
   app:
     build:
       context: ./
       dockerfile: ./Dockerfile
+    volumes:
+      - ./temp:/app/temp
+      - D:/logs/:/logs/GoogleShop/
     user: "root"
     privileged: true
-    network_mode: container:vpn
+    network_mode: container:vizok-gluetun-1
     depends_on:
-      - vpn
+      - gluetun

@@ -17,3 +17,8 @@ log_GoogleShop_all.log.*
 temp/
 file_temp_all.xlsx
 cred.json
+.env
+user_dir_1
+user_dir_2
+user_dir_3
+user_dir_4

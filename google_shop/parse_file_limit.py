@@ -57,7 +57,7 @@ def del_deliver(price):
         price=0
     return price
 
-def request_scrap(param_item):
+def request_scrap(param_item,user_dir):
     
 
     
@@ -90,7 +90,7 @@ def request_scrap(param_item):
        
 
         #proxy={"server": f'socks5://10.0.100.12:9050'}
-        browser=p.firefox.launch_persistent_context('./temp/', headless = True, base_url='https://www.google.com', viewport={ 'width': 1280, 'height': 920 }, user_agent=random.choice(user_agents),permissions=['geolocation'],geolocation={'latitude':49.842957,"longitude":24.031111}, locale='uk-UA',timezone_id='Europe/Kyiv')
+        browser=p.firefox.launch_persistent_context(user_dir, headless = True, base_url='https://www.google.com', viewport={ 'width': 1280, 'height': 920 }, user_agent=random.choice(user_agents),permissions=['geolocation'],geolocation={'latitude':49.842957,"longitude":24.031111}, locale='uk-UA',timezone_id='Europe/Kyiv')
         page=browser.pages[0]
         stealth_sync(page)
         page.goto('https://www.google.com', wait_until='domcontentloaded')
@@ -185,7 +185,7 @@ def run(df):
     today = date.today()
     for index, row in df.iterrows():
         
-        large_str=request_scrap(row['name'])
+        large_str=request_scrap(row['name'],user_dir)
        
 
         for product in large_str:
@@ -300,8 +300,8 @@ def main(num_processes = 1):
     
    
 
-    num_processes = 1
-    
+    num_processes = 4
+    user_dirs=[f'./user_dir_{i}/'for i in range (num_processes)]
     dataframe=pd.read_excel('./google_shop/file_temp.xlsx',dtype=str)
     dataframe = dataframe.dropna(subset=['name'])
     if dataframe.empty==True:
@@ -316,7 +316,7 @@ def main(num_processes = 1):
     # Create 10 separate processes
     threads = []
     for i in range(num_processes):
-        t = Process(target=run, args=(split_df[i],))
+        t = Process(target=run, args=(split_df[i],user_dirs[i],))
         threads.append(t)
 
     

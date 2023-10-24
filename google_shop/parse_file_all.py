@@ -58,7 +58,7 @@ def del_deliver(price):
         price=0
     return price
 
-def request_scrap(param_item):
+def request_scrap(param_item,user_dir):
     
 
     
@@ -91,22 +91,21 @@ def request_scrap(param_item):
        
 
         #proxy={"server": f'socks5://10.0.100.12:9050'}
-        browser=p.firefox.launch_persistent_context('./temp/', headless = True, base_url='https://www.google.com', viewport={ 'width': 1280, 'height': 920 }, user_agent=random.choice(user_agents),permissions=['geolocation'],geolocation={'latitude':49.842957,"longitude":24.031111}, locale='uk-UA',timezone_id='Europe/Kyiv')
+        browser=p.firefox.launch_persistent_context(user_dir, headless = True, base_url='https://www.google.com', viewport={ 'width': 1280, 'height': 920 }, user_agent=random.choice(user_agents),permissions=['geolocation'],geolocation={'latitude':49.842957,"longitude":24.031111}, locale='uk-UA',timezone_id='Europe/Kyiv')
         page=browser.pages[0]
         stealth_sync(page)
         page.goto('https://www.google.com', wait_until='domcontentloaded')
         time.sleep(random.uniform(1.5, 5.9))
         page.click('textarea[name="q"]')
         time.sleep(random.uniform(1.5, 3.9))
-        page.type('textarea[name="q"]', param_item) 
+        page.type('textarea[name="q"]', param_item)
         page.keyboard.press("Enter")
         time.sleep(random.uniform(1.5, 2.9))
         
          # Click the "Shopping" tab
         page.click('text=Покупки')
         time.sleep(random.uniform(1.5, 4.9))
-
-
+        
 
         def get_suggested_search_data():
             google_shopping_data = []
@@ -179,7 +178,7 @@ def request_scrap(param_item):
 
 
 
-def run(df):
+def run(df,user_dir):
     import sqlite3
     con=sqlite3.connect('./google_shop/temp_name_all.db') 
     cur=con.cursor()
@@ -187,7 +186,7 @@ def run(df):
 
     for index, row in df.iterrows():
         
-        large_str=request_scrap(row['name'])
+        large_str=request_scrap(row['name'],user_dir)
        
 
         for product in large_str:
@@ -294,7 +293,7 @@ def main(num_processes = 1):
 
     
     
-
+    
 
 
 
@@ -302,8 +301,10 @@ def main(num_processes = 1):
     
    
 
-    num_processes = 3
-    
+    num_processes = 4
+    user_dirs=[f'./user_dir_{i}/'for i in range (num_processes)]
+
+
     dataframe=pd.read_excel('./google_shop/file_temp_all.xlsx',dtype=str)
     # Convert your global 'links' list to a list that can be shared between processes
     #dataframe['code'] = dataframe['code'].astype(str)
@@ -313,7 +314,7 @@ def main(num_processes = 1):
     # Create 10 separate processes
     threads = []
     for i in range(num_processes):
-        t = Process(target=run, args=(split_df[i],))
+        t = Process(target=run, args=(split_df[i],user_dirs[i],))
         threads.append(t)
 
     

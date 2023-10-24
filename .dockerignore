@@ -3,3 +3,7 @@
 ./overload/
 ./rozetka/
 ./google_shop/__pycache__/
+./.git/
+./google_shop/temp_name.db 
+./google_shop/temp_name_all.db 
+__pycache__/
