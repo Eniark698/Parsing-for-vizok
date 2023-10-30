@@ -11,7 +11,7 @@ def overload():
     password=base64.b64decode(password.decode("utf-8")).decode()
 
     # Connect to the SQLite database
-    sqlite_conn = sqlite3.connect('./google_shop/temp_name.db')
+    sqlite_conn = sqlite3.connect('./google_shop/temp_name_all.db')
     sqlite_cursor = sqlite_conn.cursor()
 
     
@@ -59,3 +59,7 @@ def overload():
     sqlite_conn.close()
     sql_server_cursor.close()
     sql_server_conn.close()
+
+
+
+overload()

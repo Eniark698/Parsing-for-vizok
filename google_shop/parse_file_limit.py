@@ -57,7 +57,7 @@ def del_deliver(price):
         price=0
     return price
 
-def request_scrap(param_item,user_dir):
+def request_scrap(param_item,user_dir,i):
     
 
     
@@ -101,9 +101,12 @@ def request_scrap(param_item,user_dir):
         page.keyboard.press("Enter")
         time.sleep(random.uniform(1.5, 2.9))
         
-         # Click the "Shopping" tab
-        page.click('text=Покупки')
-        time.sleep(random.uniform(1.5, 4.9))
+        try:
+            # Click the "Shopping" tab
+            page.click('text=Покупки')
+            time.sleep(random.uniform(1.5, 4.9))
+        except:
+            page.screenshot(path=f'./screenshot_{i}.png')
 
 
 
@@ -178,14 +181,14 @@ def request_scrap(param_item,user_dir):
 
 
 
-def run(df):
+def run(df,user_dir,i):
     import sqlite3
     con=sqlite3.connect('./google_shop/temp_name.db') 
     cur=con.cursor()
     today = date.today()
     for index, row in df.iterrows():
         
-        large_str=request_scrap(row['name'],user_dir)
+        large_str=request_scrap(row['name'],user_dir,i)
        
 
         for product in large_str:
@@ -298,11 +301,13 @@ def main(num_processes = 1):
 
 
     
-   
-
-    num_processes = 4
-    user_dirs=[f'./user_dir_{i}/'for i in range (num_processes)]
     dataframe=pd.read_excel('./google_shop/file_temp.xlsx',dtype=str)
+
+    num_processes = 1
+    if len(dataframe)<num_processes:
+        num_processes=1
+    user_dirs=[f'./user_dir_{i+1}/'for i in range (num_processes)]
+    
     dataframe = dataframe.dropna(subset=['name'])
     if dataframe.empty==True:
         sys.exit('no data in excel file')
@@ -316,7 +321,7 @@ def main(num_processes = 1):
     # Create 10 separate processes
     threads = []
     for i in range(num_processes):
-        t = Process(target=run, args=(split_df[i],user_dirs[i],))
+        t = Process(target=run, args=(split_df[i],user_dirs[i],i))
         threads.append(t)
 
     

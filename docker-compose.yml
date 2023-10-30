@@ -1,8 +1,11 @@
 version: "3"
+
+
+
 services:
   gluetun:
     image: qmcgaw/gluetun
-    # container_name: gluetun
+    container_name: gluetun
     # line above must be uncommented to allow external containers to connect.
     # See https://github.com/qdm12/gluetun-wiki/blob/main/setup/connect-a-container-to-gluetun.md#external-container-to-gluetun
     cap_add:
@@ -13,34 +16,36 @@ services:
       - 8888:8888/tcp # HTTP proxy
       - 8388:8388/tcp # Shadowsocks
       - 8388:8388/udp # Shadowsocks
-    # volumes:
-    #   - /yourpath:/gluetun
     environment:
-      # See https://github.com/qdm12/gluetun-wiki/tree/main/setup#setup
       - VPN_SERVICE_PROVIDER=nordvpn
       - VPN_TYPE=openvpn
       # OpenVPN:
       - OPENVPN_USER="$OPENVPN_USER"
       - OPENVPN_PASSWORD="$OPENVPN_PASSWORD"
-      # Wireguard:
-      # - WIREGUARD_PRIVATE_KEY=wOEI9rqqbDwnN8/Bpp22sVz48T71vJ4fYmFWujulwUU=
-      # - WIREGUARD_ADDRESSES=10.64.222.21/32
       # Timezone for accurate log times
       - TZ=Europe/Kyiv
       # Server list updater
-      # See https://github.com/qdm12/gluetun-wiki/blob/main/setup/servers.md#update-the-vpn-servers-list
       - UPDATER_PERIOD=0
       - UPDATER_MIN_RATIO=0.0001
       - SERVER_COUNTRIES=Ukraine
+      - FIREWALL_DEBUG=True
+      - FIREWALL_OUTBOUND_SUBNETS="$bi2_subnet"
+
   app:
+    container_name: vizok-app
     build:
       context: ./
       dockerfile: ./Dockerfile
     volumes:
-      - ./temp:/app/temp
-      - D:/logs/:/logs/GoogleShop/
-    user: "root"
-    privileged: true
-    network_mode: container:vizok-gluetun-1
+      - ./user_dir_1:/app/user_dir_1
+      - ./user_dir_2:/app/user_dir_2
+      - ./user_dir_3:/app/user_dir_3
+      - ./user_dir_4:/app/user_dir_4
+      - ./user_dir_5:/app/user_dir_5
+      - ./user_dir_6:/app/user_dir_6
+      - ./user_dir_7:/app/user_dir_7
+      - ./user_dir_8:/app/user_dir_8
+      - /logs/:/logs/GoogleShop/
     depends_on:
       - gluetun
+    network_mode: "container:gluetun"

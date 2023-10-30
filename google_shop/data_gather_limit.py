@@ -35,9 +35,16 @@ def gather():
     df=df.sample(frac=1, random_state=None)
     df.to_excel('./google_shop/file_temp.xlsx', index=False)
 
-    
+
+    # Delete all rows except the first one
+    num_rows = sheet.row_count  # Get the total number of rows
+    if num_rows > 1:  # If there's more than 1 row, delete the rest
+        sheet.delete_rows(2, num_rows)  # Delete rows from 2 to the end
+        deleted=True
+    else:
+        deleted=False
     print('created excel file(limit)')
-    return {'rows': len(df), 'modifiedTime': str(dt_with_timezone)}
+    return {'rows': len(df), 'modifiedTime': str(dt_with_timezone), 'is_deleted':str(deleted)}
 
 
 

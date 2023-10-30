@@ -15,14 +15,14 @@ from traceback import format_exc
 import logging
 from logging.handlers import TimedRotatingFileHandler
 log_formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
-#log_file = '/logs/GoogleShop/GoogleShop_all.log'
-log_file = './google_shop/log_GoogleShop_all.log'
+log_file = '/logs/GoogleShop/GoogleShop_all.log'
+#log_file = './google_shop/log_GoogleShop_all.log'
 handler = TimedRotatingFileHandler(log_file, when="midnight", interval=1, backupCount=30)
 handler.setFormatter(log_formatter)
 logger = logging.getLogger()
 logger.propagate = False
 logger.addHandler(handler)
-logger.setLevel(logging.DEBUG)
+logger.setLevel(logging.CRITICAL)
 import warnings
 warnings.filterwarnings("ignore") 
 
@@ -39,40 +39,40 @@ def main() -> None:
         start=time.time()
         # dict1=gather()
         # main1()
-        # overload() 
+        #overload() 
         # print('part_1_done')
         # part_1_done=True
 
         
 
-        # dict2=gather_all()
-        # main2()
-        # overload_all()  
-        # print('part_2_done')
-        # part_2_done=True
+        dict2=gather_all()
+        main2()
+        overload_all()  
+        print('part_2_done')
+        part_2_done=True
 
         
 
     except:
-        logger.debug('{}'.format(format_exc()))
-        logger.debug('NOT COMPLETED')
+        logger.critical('{}'.format(format_exc()))
+        logger.critical('NOT COMPLETED')
         try:
             dict1
-            logger.debug('limit part is done')
+            logger.critical('limit part is done')
         except:
-            logger.debug('not done limit part')
+            logger.critical('not done limit part')
         try:
             dict2
-            logger.debug('all part is done')
+            logger.critical('all part is done')
         except:
-            logger.debug('not done all part')
-        logger.debug('exec time: ' + str(time.time()-start))
+            logger.critical('not done all part')
+        logger.critical('exec time: ' + str(time.time()-start))
 
     else:
-        logger.debug('limit part\n', dict1)
-        logger.debug('all part\n', dict2)
-        logger.debug('successfull completed')
-        logger.debug('exec time: ' + str(time.time()-start))
+        #logger.critical('limit part\n', dict1)
+        logger.critical('all part\n', dict2)
+        logger.critical('successfull completed')
+        logger.critical('exec time: ' + str(time.time()-start))
 
 
 if __name__=='__main__':
