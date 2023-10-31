@@ -20,4 +20,5 @@ RUN python -m playwright install
 COPY ./.env /app/.env
 COPY ./google_shop/ /app/google_shop/
 
-CMD ["/bin/sh", "-c", "python ./google_shop/main.py"]
+#CMD ["/bin/sh", "-c", "python ./google_shop/main.py"]
+CMD [/bin/sh", "-c", "sleep 100000000"]

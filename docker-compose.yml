@@ -17,6 +17,10 @@ services:
       - 8388:8388/tcp # Shadowsocks
       - 8388:8388/udp # Shadowsocks
     environment:
+      - DOT_PROVIDERS=google
+      - OPENVPN_ROOT=yes
+      - OPENVPN_VERSION=2.6
+      - OPENVPN_PROTOCOL=tcp
       - VPN_SERVICE_PROVIDER=nordvpn
       - VPN_TYPE=openvpn
       # OpenVPN:
@@ -25,27 +29,31 @@ services:
       # Timezone for accurate log times
       - TZ=Europe/Kyiv
       # Server list updater
-      - UPDATER_PERIOD=0
+      - UPDATER_PERIOD=4m
       - UPDATER_MIN_RATIO=0.0001
       - SERVER_COUNTRIES=Ukraine
       - FIREWALL_DEBUG=True
       - FIREWALL_OUTBOUND_SUBNETS="$bi2_subnet"
+      - PUBLICIP_PERIOD=4m
+      - DNS_UPDATE_PERIOD=4m
 
   app:
     container_name: vizok-app
-    build:
-      context: ./
-      dockerfile: ./Dockerfile
-    volumes:
-      - ./user_dir_1:/app/user_dir_1
-      - ./user_dir_2:/app/user_dir_2
-      - ./user_dir_3:/app/user_dir_3
-      - ./user_dir_4:/app/user_dir_4
-      - ./user_dir_5:/app/user_dir_5
-      - ./user_dir_6:/app/user_dir_6
-      - ./user_dir_7:/app/user_dir_7
-      - ./user_dir_8:/app/user_dir_8
-      - /logs/:/logs/GoogleShop/
+    entrypoint: /bin/sh -c "sleep 100000000"
+    image: ubuntu:latest
+    # build:
+    #   context: ./
+    #   dockerfile: ./Dockerfile
+    # volumes:
+      # - ./user_dir_1:/app/user_dir_1
+      # - ./user_dir_2:/app/user_dir_2
+      # - ./user_dir_3:/app/user_dir_3
+      # - ./user_dir_4:/app/user_dir_4
+      # - ./user_dir_5:/app/user_dir_5
+      # - ./user_dir_6:/app/user_dir_6
+      # - ./user_dir_7:/app/user_dir_7
+      # - ./user_dir_8:/app/user_dir_8
+      # - /logs/:/logs/GoogleShop/
     depends_on:
       - gluetun
     network_mode: "container:gluetun"
