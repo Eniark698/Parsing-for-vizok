@@ -1,4 +1,4 @@
-def overload():
+def overload(logger):
     import sqlite3
     import pyodbc
     #import secret variables
@@ -27,7 +27,7 @@ def overload():
 
     #sql_server_cursor.execute('delete from Google_Shop;')
 
-  
+
     # Assuming all data is correctly fetched and there's data to insert:
     if rows:
         # Insert data into SQL Server table
@@ -61,5 +61,4 @@ def overload():
     sql_server_conn.close()
 
 
-
-overload()
+    logger.critical('output part done')

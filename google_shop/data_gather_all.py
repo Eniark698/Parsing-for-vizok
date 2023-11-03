@@ -1,4 +1,4 @@
-def gather():
+def gather(logger):
   import pyodbc
   import base64
   import pandas as pd
@@ -26,7 +26,7 @@ def gather():
 
   # Fetch data from SQLite table
   df=pd.read_sql("""
-                  SELECT  distinct trim(Name) as name, Barcode as code
+                  SELECT distinct trim(Name) as name, Barcode as code
                   FROM [bi_fop_storozhuk].[dbo].[ProductAdministrative]
                   order by name asc, code asc;
                  """,sql_server_conn)
@@ -46,7 +46,7 @@ def gather():
                 path.getmtime(current_working_directory +'/google_shop/file_temp_all.xlsx'), pytz.timezone("Europe/Kyiv")           
                               )
 
-  return {'rows': len(df), 'modifiedTime': str(dt_with_timezone)}
-
+  logger.critical('input part: ')
+  logger.critical({'rows': len(df), 'modifiedTime': str(dt_with_timezone)})
 
 

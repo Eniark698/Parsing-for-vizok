@@ -1,59 +1,59 @@
 version: "3"
 
-
-
 services:
-  gluetun:
-    image: qmcgaw/gluetun
-    container_name: gluetun
-    # line above must be uncommented to allow external containers to connect.
-    # See https://github.com/qdm12/gluetun-wiki/blob/main/setup/connect-a-container-to-gluetun.md#external-container-to-gluetun
+  app-limit:
+    container_name: vizok-app-limit
+    build:
+      context: ./
+      dockerfile: ./Limit.dockerfile
     cap_add:
       - NET_ADMIN
-    devices:
-      - /dev/net/tun:/dev/net/tun
     ports:
-      - 8888:8888/tcp # HTTP proxy
-      - 8388:8388/tcp # Shadowsocks
-      - 8388:8388/udp # Shadowsocks
-    environment:
-      - DOT_PROVIDERS=google
-      - OPENVPN_ROOT=yes
-      - OPENVPN_VERSION=2.6
-      - OPENVPN_PROTOCOL=tcp
-      - VPN_SERVICE_PROVIDER=nordvpn
-      - VPN_TYPE=openvpn
-      # OpenVPN:
-      - OPENVPN_USER="$OPENVPN_USER"
-      - OPENVPN_PASSWORD="$OPENVPN_PASSWORD"
-      # Timezone for accurate log times
-      - TZ=Europe/Kyiv
-      # Server list updater
-      - UPDATER_PERIOD=4m
-      - UPDATER_MIN_RATIO=0.0001
-      - SERVER_COUNTRIES=Ukraine
-      - FIREWALL_DEBUG=True
-      - FIREWALL_OUTBOUND_SUBNETS="$bi2_subnet"
-      - PUBLICIP_PERIOD=4m
-      - DNS_UPDATE_PERIOD=4m
+      - 8889:8888/tcp # HTTP proxy
+      - 8389:8388/tcp # Shadowsocks
+      - 8389:8388/udp # Shadowsocks
+      - 81:80/udp
+      - 81:80/tcp
+    volumes:
+        - /dev/net/tun:/dev/net/tun
+        - /logs/:/logs/GoogleShop/
+        - ./user_dir_1:/app/user_dir_1
+        - ./user_dir_2:/app/user_dir_2
+        - ./user_dir_3:/app/user_dir_3
+        - ./user_dir_4:/app/user_dir_4
+    sysctls:
+      - net.ipv6.conf.all.disable_ipv6=1
+      - net.ipv6.conf.default.disable_ipv6=1
+      - net.ipv6.conf.lo.disable_ipv6=1
+      - net.ipv6.conf.eth0.disable_ipv6=1
 
-  app:
-    container_name: vizok-app
-    entrypoint: /bin/sh -c "sleep 100000000"
-    image: ubuntu:latest
-    # build:
-    #   context: ./
-    #   dockerfile: ./Dockerfile
-    # volumes:
-      # - ./user_dir_1:/app/user_dir_1
-      # - ./user_dir_2:/app/user_dir_2
-      # - ./user_dir_3:/app/user_dir_3
-      # - ./user_dir_4:/app/user_dir_4
-      # - ./user_dir_5:/app/user_dir_5
-      # - ./user_dir_6:/app/user_dir_6
-      # - ./user_dir_7:/app/user_dir_7
-      # - ./user_dir_8:/app/user_dir_8
-      # - /logs/:/logs/GoogleShop/
-    depends_on:
-      - gluetun
-    network_mode: "container:gluetun"
+
+
+
+
+      
+  app-all:
+    container_name: vizok-app-all
+    build:
+      context: ./
+      dockerfile: ./All.dockerfile
+    cap_add:
+      - NET_ADMIN
+    ports:
+      - 8890:8888/tcp # HTTP proxy
+      - 8390:8388/tcp # Shadowsocks
+      - 8390:8388/udp # Shadowsocks
+      - 82:80/udp
+      - 82:80/tcp
+    volumes:
+        - /dev/net/tun:/dev/net/tun
+        - /logs/:/logs/GoogleShop/
+        - ./user_dir_5:/app/user_dir_5
+        - ./user_dir_6:/app/user_dir_6
+        - ./user_dir_7:/app/user_dir_7
+        - ./user_dir_8:/app/user_dir_8
+    sysctls:
+      - net.ipv6.conf.all.disable_ipv6=1
+      - net.ipv6.conf.default.disable_ipv6=1
+      - net.ipv6.conf.lo.disable_ipv6=1
+      - net.ipv6.conf.eth0.disable_ipv6=1

@@ -3,13 +3,26 @@ import pandas as pd
 import time
 import random
 import math
-import sys
 from playwright.sync_api import sync_playwright
 from playwright_stealth import stealth_sync
-from threading import Thread
-from multiprocessing import Process
+from multiprocessing import Process, Lock
 from datetime import date
+from random import randint
+import subprocess
+import http.client as httplib
 
+
+def have_internet() -> bool:
+    conn = httplib.HTTPSConnection("8.8.8.8", timeout=5)
+    try:
+        conn.request("HEAD", "/")
+        return True
+    except Exception:
+        return False
+    finally:
+        conn.close()
+
+        
 
 def extract_text(element, selector):
     sub_element = element.query_selector(selector)
@@ -57,15 +70,17 @@ def del_deliver(price):
         price=0
     return price
 
-def request_scrap(param_item,user_dir,i):
+def request_scrap(param_item,user_dir,i1,lock):
     
 
     
     with sync_playwright() as p:
-            
+        with lock:
+            time.sleep(5)
+                
         
 
-
+        
         user_agents = [
             'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36'
             ,'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.131 Safari/537.36'
@@ -93,22 +108,20 @@ def request_scrap(param_item,user_dir,i):
         browser=p.firefox.launch_persistent_context(user_dir, headless = True, base_url='https://www.google.com', viewport={ 'width': 1280, 'height': 920 }, user_agent=random.choice(user_agents),permissions=['geolocation'],geolocation={'latitude':49.842957,"longitude":24.031111}, locale='uk-UA',timezone_id='Europe/Kyiv')
         page=browser.pages[0]
         stealth_sync(page)
-        page.goto('https://www.google.com', wait_until='domcontentloaded')
-        time.sleep(random.uniform(1.5, 5.9))
-        page.click('textarea[name="q"]')
-        time.sleep(random.uniform(1.5, 3.9))
-        page.type('textarea[name="q"]', param_item) 
-        page.keyboard.press("Enter")
-        time.sleep(random.uniform(1.5, 2.9))
-        
         try:
+            page.goto('https://www.google.com', wait_until='domcontentloaded')
+            time.sleep(random.uniform(1.5, 5.9))
+            page.click('textarea[name="q"]')
+            time.sleep(random.uniform(1.5, 3.9))
+            page.type('textarea[name="q"]', param_item)
+            page.keyboard.press("Enter")
+            time.sleep(random.uniform(1.5, 2.9))
+        
             # Click the "Shopping" tab
             page.click('text=Покупки')
             time.sleep(random.uniform(1.5, 4.9))
         except:
-            page.screenshot(path=f'./screenshot_{i}.png')
-
-
+            page.screenshot(path=f'./screenshot_{i1}.png')
 
         def get_suggested_search_data():
             google_shopping_data = []
@@ -181,14 +194,15 @@ def request_scrap(param_item,user_dir,i):
 
 
 
-def run(df,user_dir,i):
+def run(df,user_dir,i,lock):
     import sqlite3
     con=sqlite3.connect('./google_shop/temp_name.db') 
     cur=con.cursor()
     today = date.today()
+
     for index, row in df.iterrows():
         
-        large_str=request_scrap(row['name'],user_dir,i)
+        large_str=request_scrap(row['name'],user_dir,i,lock)
        
 
         for product in large_str:
@@ -261,10 +275,11 @@ def run(df,user_dir,i):
             
             con.commit()
 
-
-
-def main(num_processes = 1):
     
+
+def main(logger,num_processes = 1):
+    
+
     import sqlite3
     con=sqlite3.connect('./google_shop/temp_name.db')
     #con.isolation_level=None
@@ -295,33 +310,39 @@ def main(num_processes = 1):
 
     
     
-
-
-
-
-
     
+
+
+    lock = Lock()
+    
+   
+   
+    
+    user_dirs=[f'./user_dir_{i+1}/'for i in range (num_processes)]
+    
+
     dataframe=pd.read_excel('./google_shop/file_temp.xlsx',dtype=str)
 
-    num_processes = 1
+    
     if len(dataframe)<num_processes:
         num_processes=1
     user_dirs=[f'./user_dir_{i+1}/'for i in range (num_processes)]
     
-    dataframe = dataframe.dropna(subset=['name'])
-    if dataframe.empty==True:
-        sys.exit('no data in excel file')
+    
     dataframe=dataframe.sample(frac=1, random_state=None)
 
-    # Convert your global 'links' list to a list that can be shared between processes
-    #dataframe['code'] = dataframe['code'].astype(str)
-    # Split the URLs into 10 separate chunks
+
+
+
+
     split_df = split_dataframe(dataframe, num_processes)
+    lock.acquire()
+
 
     # Create 10 separate processes
     threads = []
     for i in range(num_processes):
-        t = Process(target=run, args=(split_df[i],user_dirs[i],i))
+        t = Process(target=run, args=(split_df[i],user_dirs[i],i,lock,))
         threads.append(t)
 
     
@@ -329,9 +350,61 @@ def main(num_processes = 1):
     for t in threads:
         t.start()
     
+    while True:
+        if lock:
+            pass
+        else:
+            lock.acquire()
+        time.sleep(10)
+
+
+
+        while True:
+            try:
+                vpn_process.terminate()
+                vpn_process.wait()
+            except:
+                pass
+    
+            vpn_process=subprocess.Popen(["openvpn", '--config' ,f"ovpn_udp/ua{randint(51,64)}.nordvpn.com.udp.ovpn", '--auth-user-pass', 'temp_cred.txt']) 
+
+            
+
+
+            time.sleep(10)
+            if have_internet()==True:
+                break
+            
+
+        if lock:
+            lock.release()
+        
+
+        time.sleep(300)
+        check_list_to_complite=[0 for i in range(num_processes) ]
+        for i,proc in enumerate(threads):
+            if proc.is_alive():
+                check_list_to_complite[i]=1
+            else:
+                pass
+        if not(any(check_list_to_complite)):
+            break
     # Wait for all processes to complete
     for t in threads:
         t.join()
 
+
+    vpn_process.terminate()
     
-    print("All processes are complete in parse_limit.")
+    vpn_process.wait()
+
+
+    logger.critical('parse part done')
+
+
+
+    
+
+
+    
+    

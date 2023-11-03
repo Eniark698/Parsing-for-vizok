@@ -1,8 +1,8 @@
-def gather():
+def gather(logger):
     import gspread
     from oauth2client.service_account import ServiceAccountCredentials
     import googleapiclient.discovery
-
+    import sys
     from datetime import datetime
     import pytz
     import pandas as pd
@@ -43,8 +43,11 @@ def gather():
         deleted=True
     else:
         deleted=False
-    print('created excel file(limit)')
-    return {'rows': len(df), 'modifiedTime': str(dt_with_timezone), 'is_deleted':str(deleted)}
-
-
-
+    
+    logger.critical('input part: ')
+    logger.critical({'rows': len(df), 'modifiedTime': str(dt_with_timezone)})
+    df = df.dropna(subset=['name'])
+    if df.empty==True:
+        #sys.exit('no data in excel file')
+        logger.critical('no data in excel file, ending...')
+        sys.exit('no data in excel file')

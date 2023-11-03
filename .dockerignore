@@ -7,3 +7,5 @@
 ./google_shop/temp_name.db 
 ./google_shop/temp_name_all.db 
 __pycache__/
+./google_shop/file_temp_all.xlsx
+./google_shop/file_temp.xlsx

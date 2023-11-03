@@ -1,4 +1,4 @@
-def overload():
+def overload(logger):
     import sqlite3
     import pyodbc
     #import secret variables
@@ -59,3 +59,6 @@ def overload():
     sqlite_conn.close()
     sql_server_cursor.close()
     sql_server_conn.close()
+
+
+    logger.critical('output part done')
