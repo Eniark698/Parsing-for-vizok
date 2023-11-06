@@ -15,5 +15,15 @@ scrape_configs:
          - localhost
        labels:
          job: varlogs
-         parser: regex
-         __path__: /var/logs/*.log
+         project: parser
+         __path__: /var/logs/*-all.log
+
+
+  - job_name: python-logs
+   static_configs:
+     - targets:
+         - localhost
+       labels:
+         job: varlogs
+         project: parser
+         __path__: /var/logs/*-limit.log

@@ -9,16 +9,14 @@ from traceback import format_exc
 
 
 import logging
-from logging.handlers import TimedRotatingFileHandler
-log_formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
-log_file = '/logs/GoogleShop/GoogleShop_limit.log'
-#log_file = './google_shop/log_GoogleShop_all.log'
-handler = TimedRotatingFileHandler(log_file, when="midnight", interval=1, backupCount=30)
-handler.setFormatter(log_formatter)
-logger = logging.getLogger()
-logger.propagate = False
-logger.addHandler(handler)
-logger.setLevel(logging.CRITICAL)
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s [%(levelname)s] %(message)s",
+    handlers=[
+        logging.FileHandler("/logs/GoogleShop/GoogleShop_limit.log"),
+        logging.StreamHandler()
+    ]
+)
 import warnings
 warnings.filterwarnings("ignore") 
 
@@ -30,27 +28,21 @@ def main() -> None:
 
         
         start=time.time()
-        gather(logger)
-        main2(logger,num_processes)
-        overload(logger) 
+        gather(logging)
+        main2(logging,num_processes)
+        overload(logging) 
         
 
         
 
     except:
-        logger.critical('{}'.format(format_exc()))
-        logger.critical('NOT COMPLETED')
+        logging.critical('{}'.format(format_exc()))
+        logging.critical({'BAD':'NOT COMPLETED'})
    
-        # try:
-        #     logger.critical('limit part\n', signal_1)
-        #     logger.critical('limit part is done')
-        # except:
-        #     logger.critical('not done gathering info part')
-        # logger.critical('exec time: ' + str(time.time()-start))
+
 
     else:
-        logger.info('successfull completed all stages')
-        logger.info('exec time: ' + str(time.time()-start))
+        logging.info({'SUCCESS':"successfull completed all stages", 'exec time': str(time.time() - start)})
 
 
 

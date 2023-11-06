@@ -27,10 +27,6 @@ services:
       - net.ipv6.conf.lo.disable_ipv6=1
       - net.ipv6.conf.eth0.disable_ipv6=1
 
-
-
-
-
       
   app-all:
     container_name: vizok-app-all
