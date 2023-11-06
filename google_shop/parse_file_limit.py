@@ -399,7 +399,20 @@ def main(logger,num_processes = 1):
     vpn_process.wait()
 
 
-    logger.critical('parse part done')
+    
+    pattern = "openvpn --config ovpn_udp/ua[5-7][0-9].nordvpn.com.udp.ovpn --auth-user-pass temp_cred.txt"
+    kill_command = ["pkill", "-9", "-f", pattern]
+    result = subprocess.run(kill_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    # Check the return code to determine if the kill command was successful
+    if result.returncode == 0:
+        pass
+    elif result.returncode == 1:
+        pass
+    else:
+        logger.critical(f"An error occurred while trying to kill the process: {result.stderr.decode().strip()}")
+
+
+    logger.info('parse part done')
 
 
 

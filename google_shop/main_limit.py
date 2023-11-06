@@ -49,8 +49,8 @@ def main() -> None:
         # logger.critical('exec time: ' + str(time.time()-start))
 
     else:
-        logger.critical('successfull completed all stages')
-        logger.critical('exec time: ' + str(time.time()-start))
+        logger.info('successfull completed all stages')
+        logger.info('exec time: ' + str(time.time()-start))
 
 
 

@@ -61,4 +61,4 @@ def overload(logger):
     sql_server_conn.close()
 
 
-    logger.critical('output part done')
+    logger.info('output part done')

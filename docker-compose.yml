@@ -57,3 +57,12 @@ services:
       - net.ipv6.conf.default.disable_ipv6=1
       - net.ipv6.conf.lo.disable_ipv6=1
       - net.ipv6.conf.eth0.disable_ipv6=1
+
+
+  promtail:
+    image: grafana/promtail:latest
+    volumes:
+      - /logs/:/var/logs  # Mount the host logs folder to the container
+      - ./promtail-config.yml:/etc/promtail/config.yml  # Mount the Promtail configuration
+    command: -config.file=/etc/promtail/config.yml
+

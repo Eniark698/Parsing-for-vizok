@@ -17,7 +17,7 @@ handler.setFormatter(log_formatter)
 logger = logging.getLogger()
 logger.propagate = False
 logger.addHandler(handler)
-logger.setLevel(logging.CRITICAL)
+logger.setLevel(logging.INFO)
 import warnings
 warnings.filterwarnings("ignore") 
 
@@ -45,8 +45,8 @@ def main() -> None:
         # logger.critical('exec time: ' + str(time.time()-start))
 
     else:
-        logger.critical('successfull completed all stages')
-        logger.critical('exec time: ' + str(time.time()-start))
+        logger.info('successfull completed all stages')
+        logger.info('exec time: ' + str(time.time()-start))
 
 
 if __name__=='__main__':

@@ -46,7 +46,7 @@ def gather(logger):
                 path.getmtime(current_working_directory +'/google_shop/file_temp_all.xlsx'), pytz.timezone("Europe/Kyiv")           
                               )
 
-  logger.critical('input part: ')
-  logger.critical({'rows': len(df), 'modifiedTime': str(dt_with_timezone)})
+  logger.info('input part: ')
+  logger.info({'rows': len(df), 'modifiedTime': str(dt_with_timezone)})
 
 
